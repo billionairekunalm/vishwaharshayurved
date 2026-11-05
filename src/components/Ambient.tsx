@@ -176,6 +176,22 @@ export default function Ambient() {
   const [phase, setPhase] = useState<"closed" | "opening" | "gone">("closed");
   const [g, setG] = useState(0);
   useEffect(() => { const t = setInterval(() => setG((v) => (v + 1) % GREETINGS.length), 1800); return () => clearInterval(t); }, []);
+  // Spoken welcome ("Namaste, welcome to Vishwaharsh Ayurved") 0.5s after the page loads.
+  // If the browser blocks sound until a touch, it is spoken at the visitor's first touch / tap / key press instead.
+  useEffect(() => {
+    const voice = new Audio("/welcome.mp3");
+    voice.preload = "auto";
+    let done = false;
+    const ev = ["pointerdown", "touchend", "click", "keydown"] as const;
+    const stop = () => ev.forEach((e) => window.removeEventListener(e, speak));
+    function speak() {
+      if (done) return;
+      voice.play().then(() => { done = true; stop(); }).catch(() => { /* blocked: retry on first touch */ });
+    }
+    const t = setTimeout(speak, 500);
+    ev.forEach((e) => window.addEventListener(e, speak));
+    return () => { clearTimeout(t); stop(); voice.pause(); };
+  }, []);
   useEffect(() => {
     document.documentElement.style.overflow = phase === "gone" ? "" : "hidden";
     return () => { document.documentElement.style.overflow = ""; };
