@@ -29,7 +29,8 @@ export function HapticLayer() {
 
 export function SmoothScroll() {
   useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // native scrolling on touch screens: smooth-scroll libraries fight with swipe rows and feel sticky
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches || matchMedia("(pointer: coarse)").matches) return;
     const l = new Lenis({ lerp: 0.09 });
     let id = requestAnimationFrame(function raf(t) { l.raf(t); id = requestAnimationFrame(raf); });
     return () => { cancelAnimationFrame(id); l.destroy(); };
@@ -39,7 +40,7 @@ export function SmoothScroll() {
 
 export function Reveal({ children, delay = 0, y = 40, className = "" }: { children: React.ReactNode; delay?: number; y?: number; className?: string }) {
   return (
-    <motion.div className={className} initial={{ opacity: 0, y, filter: "blur(8px)" }} whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }} viewport={{ once: true, margin: "-80px" }} onViewportEnter={softTick} transition={{ duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] }}>
+    <motion.div className={className} initial={{ opacity: 0, y }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} onViewportEnter={softTick} transition={{ duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] }}>
       {children}
     </motion.div>
   );
@@ -65,7 +66,7 @@ export function Tilt({ children, className = "", max = 10, onClick }: { children
   const gy = useTransform(y, [-0.5, 0.5], ["20%", "80%"]);
   return (
     <motion.div ref={ref} onClick={onClick} data-haptic={onClick ? "" : undefined} className={`relative ${className}`} style={{ rotateX: rx, rotateY: ry, transformPerspective: 900, transformStyle: "preserve-3d" }}
-      onPointerMove={(e) => { const r = ref.current!.getBoundingClientRect(); x.set((e.clientX - r.left) / r.width - 0.5); y.set((e.clientY - r.top) / r.height - 0.5); }}
+      onPointerMove={(e) => { if (e.pointerType !== "mouse") return; const r = ref.current!.getBoundingClientRect(); x.set((e.clientX - r.left) / r.width - 0.5); y.set((e.clientY - r.top) / r.height - 0.5); }}
       onPointerLeave={() => { x.set(0); y.set(0); }}>
       {children}
       <motion.span aria-hidden className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity hover:opacity-100" style={{ background: useTransform([gx, gy], ([a, b]) => `radial-gradient(260px circle at ${a} ${b}, rgba(255,255,255,.55), transparent 60%)`) }} />
