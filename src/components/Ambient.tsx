@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
+import { buzz, HAPTIC } from "@/lib/haptic";
 import { INGREDIENTS, Ingredient, Mandala, Namaste, type Ing } from "./GateArt";
 
 /* Calm Ayurvedic ambience, synthesised live (no audio files, no licensing):
@@ -173,7 +174,8 @@ export default function Ambient() {
     if (opened.current) return;
     opened.current = true;
     setPhase("opening");
-    setTimeout(() => { (window as unknown as { __doorsOpen?: boolean }).__doorsOpen = true; window.dispatchEvent(new Event("doors-open")); }, 1900);
+    setTimeout(() => buzz(HAPTIC.doors), 500); // rumble in time with the swing
+    setTimeout(() => { (window as unknown as { __doorsOpen?: boolean }).__doorsOpen = true; window.dispatchEvent(new Event("doors-open")); buzz(HAPTIC.bloom); }, 2300);
     setTimeout(() => setPhase("gone"), 4200);
   };
   // Not tapped within 4.5s → doors open on their own. Browsers only allow sound after a touch,

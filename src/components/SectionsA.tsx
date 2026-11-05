@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { clinic, doctor, navLinks, story, treatments, trustStats } from "@/data/clinic";
 import { Counter, Heading, Reveal, Squiggle, Tilt } from "./ui";
+import { buzz, HAPTIC } from "@/lib/haptic";
 import type { Dosha } from "./Scene3D";
 
 const LotusScene = dynamic(() => import("./Scene3D").then((m) => m.LotusScene), { ssr: false });
@@ -208,7 +209,7 @@ export function Doshas() {
         </div>
         <div className="relative h-[300px] sm:h-[420px] lg:h-[560px]">
           <div aria-hidden className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_50%_45%,#fff,#efe9f8_60%,transparent)]" />
-          <DoshaScene active={d} onSelect={setD} className="absolute inset-0" />
+          <DoshaScene active={d} onSelect={(x) => { if (x !== d) buzz(HAPTIC.select); setD(x); }} className="absolute inset-0" />
         </div>
       </div>
     </section>

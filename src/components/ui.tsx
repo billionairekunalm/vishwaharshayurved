@@ -2,6 +2,30 @@
 import { useEffect, useRef } from "react";
 import { animate, motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Lenis from "lenis";
+import { buzz, HAPTIC, softTick } from "@/lib/haptic";
+
+/** One global listener: every tap on something interactive, and every card swiped into place on mobile, gives feedback. */
+export function HapticLayer() {
+  useEffect(() => {
+    const down = (e: PointerEvent) => {
+      const t = (e.target as HTMLElement).closest?.("a,button,summary,select,[role=tab],[data-haptic]");
+      if (!t) return;
+      buzz(t.classList.contains("btn-dark") ? HAPTIC.press : HAPTIC.tap);
+    };
+    const idx = new WeakMap<Element, number>();
+    const scroll = (e: Event) => {
+      const el = e.target as HTMLElement;
+      if (!el.classList?.contains("snap") || !el.firstElementChild) return;
+      const w = (el.firstElementChild as HTMLElement).offsetWidth + 16;
+      const i = Math.round(el.scrollLeft / w);
+      if (idx.get(el) !== i) { if (idx.has(el)) buzz(8); idx.set(el, i); }
+    };
+    document.addEventListener("pointerdown", down, { passive: true });
+    document.addEventListener("scroll", scroll, { capture: true, passive: true });
+    return () => { document.removeEventListener("pointerdown", down); document.removeEventListener("scroll", scroll, true); };
+  }, []);
+  return null;
+}
 
 export function SmoothScroll() {
   useEffect(() => {
@@ -15,7 +39,7 @@ export function SmoothScroll() {
 
 export function Reveal({ children, delay = 0, y = 40, className = "" }: { children: React.ReactNode; delay?: number; y?: number; className?: string }) {
   return (
-    <motion.div className={className} initial={{ opacity: 0, y, filter: "blur(8px)" }} whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] }}>
+    <motion.div className={className} initial={{ opacity: 0, y, filter: "blur(8px)" }} whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }} viewport={{ once: true, margin: "-80px" }} onViewportEnter={softTick} transition={{ duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] }}>
       {children}
     </motion.div>
   );
@@ -40,7 +64,7 @@ export function Tilt({ children, className = "", max = 10, onClick }: { children
   const gx = useTransform(x, [-0.5, 0.5], ["20%", "80%"]);
   const gy = useTransform(y, [-0.5, 0.5], ["20%", "80%"]);
   return (
-    <motion.div ref={ref} onClick={onClick} className={`relative ${className}`} style={{ rotateX: rx, rotateY: ry, transformPerspective: 900, transformStyle: "preserve-3d" }}
+    <motion.div ref={ref} onClick={onClick} data-haptic={onClick ? "" : undefined} className={`relative ${className}`} style={{ rotateX: rx, rotateY: ry, transformPerspective: 900, transformStyle: "preserve-3d" }}
       onPointerMove={(e) => { const r = ref.current!.getBoundingClientRect(); x.set((e.clientX - r.left) / r.width - 0.5); y.set((e.clientY - r.top) / r.height - 0.5); }}
       onPointerLeave={() => { x.set(0); y.set(0); }}>
       {children}
@@ -54,7 +78,7 @@ export function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
   const seen = useInView(ref, { once: true });
   useEffect(() => {
     if (!seen) return;
-    const c = animate(0, to, { duration: 1.6, ease: "easeOut", onUpdate: (v) => { if (ref.current) ref.current.textContent = Math.round(v) + suffix; } });
+    const c = animate(0, to, { duration: 1.6, ease: "easeOut", onUpdate: (v) => { if (ref.current) ref.current.textContent = Math.round(v) + suffix; }, onComplete: () => buzz(HAPTIC.select) });
     return () => c.stop();
   }, [seen, to, suffix]);
   return <span ref={ref}>0{suffix}</span>;

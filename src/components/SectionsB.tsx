@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { clinic, doctor, faqs, facilities, patientJourney, products, servicesOffered } from "@/data/clinic";
 import { Heading, Reveal, Squiggle, Tilt } from "./ui";
 import { wa } from "./SectionsA";
+import { buzz, HAPTIC } from "@/lib/haptic";
 
 /* ------------------------------ JOURNEY ------------------------------ */
 export function Journey() {
@@ -180,6 +181,7 @@ export function Contact() {
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
     const msg = `Hello, I would like to book an appointment at ${clinic.name}.\nName: ${f.name}\nPhone: ${f.phone}\nConcern: ${f.concern}\nPreferred date: ${f.date || "flexible"}\nMode: ${f.mode}\n${f.note || ""}`;
+    buzz(HAPTIC.success);
     window.open(wa(msg), "_blank", "noopener");
     setSent(true);
   };
