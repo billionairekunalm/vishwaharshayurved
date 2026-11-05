@@ -48,42 +48,166 @@ export function Journey() {
 }
 
 /* ------------------------------ DOCTOR ------------------------------ */
+const SPEC_ICON = ["🧠", "🩸", "🤰"];
+const TIMELINE = [
+  { y: "2012", t: "BAMS", d: "RPAM, Purna", i: "🎓" },
+  { y: "2016", t: "MD (Ayurveda)", d: "Tilak Ayurved Mahavidyalay, Pune", i: "🏛️" },
+  { y: "Hospital", t: "PCMC, Moshi", d: "Clinical experience", i: "🏥" },
+  { y: "Certified", t: "PGDCP + Garbhsanskar", d: "Counselling psychology and prenatal care", i: "📜" },
+  { y: "2025", t: "Vishwaharsh Ayurved", d: "Her own clinic in Chinchwad", i: "🪷" },
+];
+const LANGS = [["मराठी", "Marathi"], ["हिन्दी", "Hindi"], ["English", "English"]];
+
+function Seal() {
+  return (
+    <div className="absolute -bottom-6 -right-3 grid h-32 w-32 place-items-center sm:-right-8 sm:h-40 sm:w-40">
+      <div className="absolute inset-0 rounded-full bg-white shadow-xl" />
+      <svg viewBox="0 0 120 120" className="absolute inset-0 animate-[spin_26s_linear_infinite]" aria-hidden>
+        <defs><path id="seal-ring" d="M60 60 m-45 0 a45 45 0 1 1 90 0 a45 45 0 1 1 -90 0" /></defs>
+        <text fontSize="9.2" fontWeight="700" fill="#4c7a53" letterSpacing="1.6"><textPath href="#seal-ring" textLength="280">BAMS ✦ MD AYURVEDA ✦ PGDCP ✦ COUNSELLOR ✦</textPath></text>
+      </svg>
+      <div className="relative text-center leading-none">
+        <p className="display bg-gradient-to-br from-saffron to-rose bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">10+</p>
+        <p className="mt-0.5 text-[9px] font-bold uppercase tracking-widest text-ink/50">years</p>
+      </div>
+    </div>
+  );
+}
+
 export function Doctor() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const y = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const letter = doctor.messageToPatients.split("\n\n");
   return (
-    <section id="doctor" ref={ref} className="panel mx-3 mt-3 sm:mt-8 overflow-hidden px-5 py-9 sm:mx-6 sm:px-10 sm:py-16 lg:py-24" aria-labelledby="doctor-h">
-      <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
-        <div className="relative">
-          <div aria-hidden className="absolute -inset-4 rotate-3 rounded-[2.5rem] bg-gradient-to-br from-rose/40 via-saffron/20 to-sage/40" />
+    <section id="doctor" ref={ref} className="panel mx-3 mt-3 overflow-x-clip px-5 py-9 sm:mx-6 sm:mt-8 sm:px-10 sm:py-16 lg:py-24" aria-labelledby="doctor-h">
+      {/* giant Devanagari watermark */}
+      <span aria-hidden lang="hi" className="font-deva pointer-events-none absolute -right-4 top-2 select-none text-[6.5rem] leading-none text-saffron/[0.08] sm:text-[13rem]">आयुर्वेद</span>
+
+      <div className="relative grid grid-cols-[minmax(0,1fr)] items-start gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+        {/* ---------- portrait ---------- */}
+        <div className="relative mx-auto w-full max-w-sm lg:sticky lg:top-24 lg:max-w-md">
+          <div aria-hidden className="absolute -inset-3 rounded-t-[999px] rounded-b-[2.5rem] bg-gradient-to-b from-saffron/40 via-rose/30 to-sage/40 blur-md" />
           <motion.div style={{ y }} className="relative">
-            <Tilt className="relative aspect-square overflow-hidden rounded-[2rem] shadow-2xl sm:aspect-[4/5]" max={5}>
-              <Image src="/clinic/doctor.jpg" alt="Dr. Harshada Malge, Ayurvedic physician at Vishwaharsh Ayurved" fill sizes="(min-width:1024px) 45vw, 90vw" className="object-cover object-[50%_30%]" priority={false} />
+            <Tilt className="relative aspect-[4/5] overflow-hidden rounded-t-[999px] rounded-b-[2.5rem] border-[5px] border-white shadow-2xl" max={5}>
+              <Image src="/clinic/doctor.jpg" alt="Dr. Harshada Malge, Ayurvedic physician at Vishwaharsh Ayurved" fill sizes="(min-width:1024px) 40vw, 90vw" className="object-cover object-[50%_30%]" />
             </Tilt>
-          </motion.div>
-          <div className="glass bob absolute -right-2 bottom-8 rounded-2xl px-5 py-3 sm:-right-6">
-            <p className="text-xs text-ink/55">Registration</p>
-            <p className="font-bold">{doctor.registration}</p>
-          </div>
-        </div>
-        <div>
-          <div id="doctor-h"><Heading eyebrow="Meet the doctor" sub={doctor.philosophy}>Dr. Harshada <em className="text-leaf not-italic">Malge</em></Heading></div>
-          <Reveal delay={0.1}>
-            <div className="mt-8 flex flex-wrap gap-2">
-              {doctor.qualifications.map((q) => <span key={q.abbr} title={q.full} className="chip !bg-ink !text-white">{q.abbr} · {q.full}</span>)}
+            <Seal />
+            <div className="glass bob absolute -left-2 bottom-16 rounded-2xl px-4 py-2.5 sm:-left-8">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-ink/50">Reg. no.</p>
+              <p className="display text-lg font-bold">{doctor.registration}</p>
             </div>
-          </Reveal>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <Reveal><div className="glass h-full rounded-3xl p-5"><h3 className="font-semibold text-leaf">Specialisations</h3><ul className="mt-2 space-y-1 text-sm text-ink/70">{doctor.specialisations.map((s) => <li key={s}>✦ {s}</li>)}</ul></div></Reveal>
-            <Reveal delay={0.1}><div className="glass h-full rounded-3xl p-5"><h3 className="font-semibold text-leaf">Education</h3><ul className="mt-2 space-y-1 text-sm text-ink/70">{doctor.education.map((e) => <li key={e.institute}>🎓 {e.institute} — {e.year}</li>)}<li>🌿 Garbhsanskar certificate course</li></ul></div></Reveal>
-          </div>
+          </motion.div>
+        </div>
+
+        {/* ---------- story ---------- */}
+        <div className="min-w-0">
+          <Reveal><span className="chip text-leaf">Meet the doctor</span></Reveal>
+          <h2 id="doctor-h" className="mt-4">
+            <Reveal delay={0.05}><span className="font-script -mb-1 block -rotate-2 text-5xl text-saffron sm:text-7xl">Dr.</span></Reveal>
+            <Reveal delay={0.1}>
+              <span className="display block text-5xl font-bold leading-[0.95] sm:text-7xl">Harshada <span className="bg-gradient-to-r from-leaf via-leaf to-saffron bg-clip-text text-transparent">Malge</span></span>
+            </Reveal>
+          </h2>
           <Reveal delay={0.15}>
-            <blockquote className="display mt-8 border-l-4 border-saffron pl-5 text-xl italic leading-snug text-ink/80">
-              “Trust your body. Respect nature. Choose Ayurveda.”
+            <p className="mt-4 flex flex-wrap items-center gap-x-3 text-xs font-bold uppercase tracking-[0.22em] text-ink/45 sm:text-sm">Ayurvedic Physician <span className="text-saffron">✦</span> Counsellor <span className="text-saffron">✦</span> Mentor of mind &amp; body</p>
+          </Reveal>
+
+          <Reveal delay={0.2}>
+            <blockquote className="relative mt-8 rounded-3xl bg-gradient-to-br from-leaf/10 to-saffron/10 p-6 pl-8">
+              <span aria-hidden className="font-script absolute -top-6 left-3 text-8xl leading-none text-saffron/60">“</span>
+              <p className="display text-lg italic leading-snug text-ink/80 sm:text-xl">{doctor.philosophy}</p>
             </blockquote>
           </Reveal>
+
+          {/* credential medals */}
+          <p className="font-script mt-10 text-3xl text-leaf">Her qualifications</p>
+          <div className="mt-3 grid grid-cols-3 gap-2.5 sm:gap-4">
+            {doctor.qualifications.map((q, i) => (
+              <Reveal key={q.abbr} delay={i * 0.1}>
+                <Tilt className="h-full rounded-3xl bg-white p-4 text-center shadow-[0_18px_40px_-22px_rgba(40,70,45,.55)] ring-1 ring-ink/5 sm:p-5" max={10}>
+                  <span className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-gold to-saffron text-sm text-white shadow">★</span>
+                  <p className="display bg-gradient-to-br from-leaf to-ink bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">{q.abbr}</p>
+                  <p className="mt-1 text-[11px] leading-snug text-ink/55 sm:text-xs">{q.full}</p>
+                </Tilt>
+              </Reveal>
+            ))}
+          </div>
+
+          {/* specialisations */}
+          <p className="font-script mt-10 text-3xl text-leaf">What she heals</p>
+          <ul className="mt-3 space-y-3">
+            {doctor.specialisations.map((s, i) => (
+              <li key={s}>
+                <Reveal delay={i * 0.08}>
+                  <div className="group glass flex items-center gap-4 rounded-2xl p-4 transition hover:-translate-y-1 hover:bg-white">
+                    <span className="display w-9 text-3xl font-bold text-saffron/40 transition group-hover:text-saffron">0{i + 1}</span>
+                    <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-sage/40 to-white text-2xl shadow-inner" aria-hidden>{SPEC_ICON[i]}</span>
+                    <span className="display text-lg font-semibold leading-tight sm:text-xl">{s}</span>
+                  </div>
+                </Reveal>
+              </li>
+            ))}
+          </ul>
+
+          {/* timeline */}
+          <p className="font-script mt-10 text-3xl text-leaf">Her journey</p>
+          <ol className="snap mt-3 sm:hidden">
+            {TIMELINE.map((t) => (
+              <li key={t.t} className="glass rounded-3xl p-5">
+                <span className="text-3xl" aria-hidden>{t.i}</span>
+                <p className="display mt-1 text-2xl font-bold text-saffron">{t.y}</p>
+                <p className="font-semibold">{t.t}</p>
+                <p className="mt-1 text-sm text-ink/60">{t.d}</p>
+              </li>
+            ))}
+          </ol>
+          <ol className="relative mt-4 hidden border-l-2 border-dashed border-saffron/40 pl-8 sm:block">
+            {TIMELINE.map((t, i) => (
+              <li key={t.t} className="relative pb-6 last:pb-0">
+                <span className="absolute -left-[3.2rem] top-0 grid h-10 w-10 place-items-center rounded-full bg-white text-lg shadow-lg ring-4 ring-cream" aria-hidden>{t.i}</span>
+                <Reveal delay={i * 0.05}>
+                  <p className="text-xs font-bold uppercase tracking-widest text-saffron">{t.y}</p>
+                  <p className="display text-xl font-semibold">{t.t}</p>
+                  <p className="text-sm text-ink/60">{t.d}</p>
+                </Reveal>
+              </li>
+            ))}
+          </ol>
+
+          <Reveal delay={0.1}>
+            <div className="mt-8 flex flex-wrap items-center gap-2">
+              <span className="text-xs font-bold uppercase tracking-widest text-ink/45">Speaks</span>
+              {LANGS.map(([n, e]) => <span key={e} className="chip !px-4 !py-2 !text-sm" title={e}><span lang={e === "English" ? "en" : e === "Hindi" ? "hi" : "mr"}>{n}</span></span>)}
+            </div>
+          </Reveal>
         </div>
+      </div>
+
+      {/* ---------- handwritten letter ---------- */}
+      <div className="relative mt-16 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[1.35fr_1fr]">
+        <Reveal y={50}>
+          <div className="relative -rotate-1 rounded-sm bg-[#fffdf3] p-7 shadow-[0_30px_60px_-30px_rgba(60,45,20,.55)] sm:p-10" style={{ backgroundImage: "repeating-linear-gradient(transparent 0 31px, rgba(76,122,83,.12) 31px 32px)" }}>
+            <span aria-hidden className="absolute -top-3 left-10 h-7 w-24 rotate-[-4deg] bg-saffron/30" />
+            <span aria-hidden className="absolute -top-3 right-10 h-7 w-24 rotate-[5deg] bg-rose/40" />
+            <p className="font-script text-4xl text-saffron sm:text-5xl">Dear Patients,</p>
+            <div className="font-script mt-3 space-y-3 text-[1.65rem] leading-[32px] text-ink/85 sm:text-3xl sm:leading-[32px]">
+              {letter.slice(1).map((p, i) => <p key={i} className={i === letter.length - 2 ? "text-leaf" : ""}>{p}</p>)}
+            </div>
+            <p className="font-script mt-5 text-right text-3xl text-ink">— Dr. Harshada Malge</p>
+          </div>
+        </Reveal>
+        <Reveal y={50} delay={0.1}>
+          <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-[2rem] bg-gradient-to-br from-ink via-[#24402c] to-leaf p-7 text-white sm:p-9">
+            <div aria-hidden className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-saffron/30 blur-3xl" />
+            <div className="relative">
+              <p className="font-script text-4xl text-[#ffd9a0]">Let&apos;s talk</p>
+              <p className="display mt-2 text-2xl font-semibold leading-tight sm:text-3xl">Your story deserves to be heard, not rushed.</p>
+              <p className="mt-3 text-sm text-white/65">In-clinic, online or at home, whichever feels easiest for you.</p>
+            </div>
+            <a href="#contact" className="btn relative mt-8 !justify-center bg-white text-ink">Book a consultation <span aria-hidden>→</span></a>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

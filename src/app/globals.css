@@ -11,6 +11,8 @@
   --color-gold: #c9a24b;
   --font-display: var(--font-fraunces), Georgia, serif;
   --font-sans: var(--font-dm), system-ui, sans-serif;
+  --font-script: var(--font-caveat), cursive;
+  --font-deva: var(--font-devanagari), serif;
 }
 
 html { scroll-behavior: auto; }

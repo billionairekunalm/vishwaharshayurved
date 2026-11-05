@@ -7,9 +7,12 @@ import { INGREDIENTS, Ingredient, Mandala, Namaste, type Ing } from "./GateArt";
 
 /* Calm Ayurvedic ambience, synthesised live (no audio files, no licensing):
    tanpura drone pattern + bansuri-style flute phrases in Raag Bhoopali (Sa Re Ga Pa Dha) + soft kalimba notes + singing bowls, through a warm echo and reverb. */
-function startAmbient() {
+let engine: AudioContext | null = null;
+function startAmbient(): AudioContext {
+  if (engine) return engine; // one engine only (also survives React strict-mode double mount)
   const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
   const ctx = new AC();
+  engine = ctx;
   const now = () => ctx.currentTime;
   const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
@@ -58,7 +61,7 @@ function startAmbient() {
     o.connect(lp); lp.connect(g); g.connect(bus); o.start(when); o.stop(when + 5.2);
   };
   const tSeq = [196, 261.63, 261.63, 130.81]; let ti = 0;
-  const tLoop = () => { tanpura(tSeq[ti++ % 4], now() + 0.05); setTimeout(tLoop, 1500 + rand(-60, 90)); };
+  const tLoop = () => { if (ctx.state === "running") tanpura(tSeq[ti++ % 4], now() + 0.05); setTimeout(tLoop, 1500 + rand(-60, 90)); };
 
   // ---- bansuri flute ----
   const flute = (f: number, when: number, dur: number, vol = 0.1) => {
@@ -80,6 +83,7 @@ function startAmbient() {
   };
   const bhoopali = [392, 440, 523.25, 587.33, 659.25, 784, 880]; // G A C D E G A  (Pa Dha Sa Re Ga Pa Dha)
   const phrase = () => {
+    if (ctx.state !== "running") { setTimeout(phrase, 1000); return; } // browser still blocking sound: wait, never queue notes
     let t = now() + 0.2, i = Math.floor(rand(2, 5));
     const len = Math.floor(rand(4, 8));
     for (let n = 0; n < len; n++) {
@@ -101,6 +105,7 @@ function startAmbient() {
   };
   let ki = 3;
   const kLoop = () => {
+    if (ctx.state !== "running") { setTimeout(kLoop, 1000); return; }
     const t = now() + 0.05, arp = Math.random() < 0.4 ? 4 : 1;
     for (let i = 0; i < arp; i++) { ki = Math.max(0, Math.min(kal.length - 1, ki + (arp > 1 ? 1 : Math.round(rand(-2, 2))))); note(kal[ki], t + i * 0.45); }
     if (ki > 5) ki = 2;
@@ -112,7 +117,7 @@ function startAmbient() {
     const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, when); g.gain.exponentialRampToValueAtTime(0.09, when + 0.7); g.gain.exponentialRampToValueAtTime(0.0001, when + 12); g.connect(bus);
     ([[1, 1], [2.01, 0.4], [2.99, 0.2], [4.2, 0.1]] as const).forEach(([m, a]) => { const o = ctx.createOscillator(); o.type = "sine"; o.frequency.value = 196 * m + (m === 1 ? 0.7 : 0); const og = ctx.createGain(); og.gain.value = a; o.connect(og); og.connect(g); o.start(when); o.stop(when + 12.2); });
   };
-  const bLoop = () => { bowl(now() + 0.1); setTimeout(bLoop, rand(26000, 38000)); };
+  const bLoop = () => { if (ctx.state === "running") bowl(now() + 0.1); setTimeout(bLoop, rand(26000, 38000)); };
 
   bowl(now() + 0.4);
   setTimeout(tLoop, 300);
@@ -121,6 +126,7 @@ function startAmbient() {
   setTimeout(bLoop, 30000);
 
   document.addEventListener("visibilitychange", () => (document.hidden ? ctx.suspend() : ctx.resume()));
+  return ctx;
 }
 const GREETINGS = ["नमस्ते", "नमस्कार", "Namaste", "स्वागत"];
 const BG: { n: Ing; x: number; y: number; s: number; d: number }[] = [
@@ -156,7 +162,6 @@ function Door({ side, open }: { side: "left" | "right"; open: boolean }) {
 export default function Ambient() {
   const [phase, setPhase] = useState<"closed" | "opening" | "gone">("closed");
   const [g, setG] = useState(0);
-  const started = useRef(false);
   useEffect(() => { const t = setInterval(() => setG((v) => (v + 1) % GREETINGS.length), 1800); return () => clearInterval(t); }, []);
   useEffect(() => {
     document.documentElement.style.overflow = phase === "gone" ? "" : "hidden";
@@ -164,9 +169,7 @@ export default function Ambient() {
   }, [phase]);
 
   const sound = () => {
-    if (started.current) return;
-    started.current = true;
-    try { startAmbient(); } catch { /* audio unsupported: site still works */ }
+    try { const c = startAmbient(); if (c.state !== "running") c.resume().catch(() => {}); } catch { /* audio unsupported: site still works */ }
   };
   const opened = useRef(false);
   const openDoors = (withSound: boolean) => {
@@ -182,10 +185,18 @@ export default function Ambient() {
   // so the music starts at the visitor's first tap / key press instead.
   useEffect(() => {
     const t = setTimeout(() => openDoors(false), 4500);
-    const first = () => sound();
-    window.addEventListener("pointerdown", first, { once: true });
-    window.addEventListener("keydown", first, { once: true });
-    return () => { clearTimeout(t); window.removeEventListener("pointerdown", first); window.removeEventListener("keydown", first); };
+    // Try to start music the moment the page opens. If the browser blocks it (most do until a touch),
+    // retry on the visitor's first touch / tap / key press, then stop listening once it is playing.
+    sound();
+    const ev = ["pointerdown", "touchend", "click", "keydown"] as const;
+    const unlock = () => {
+      try {
+        const c = startAmbient();
+        c.resume().then(() => { if (c.state === "running") ev.forEach((e) => window.removeEventListener(e, unlock)); }).catch(() => {});
+      } catch { /* ignore */ }
+    };
+    ev.forEach((e) => window.addEventListener(e, unlock));
+    return () => { clearTimeout(t); ev.forEach((e) => window.removeEventListener(e, unlock)); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const enter = () => openDoors(true);  const open = phase === "opening";

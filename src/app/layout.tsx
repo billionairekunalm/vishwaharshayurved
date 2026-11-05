@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, DM_Sans } from "next/font/google";
+import { Fraunces, DM_Sans, Caveat, Tiro_Devanagari_Hindi } from "next/font/google";
 import "./globals.css";
 import { clinic, doctor, faqs, treatments } from "@/data/clinic";
 
 const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", display: "swap" });
 const dm = DM_Sans({ subsets: ["latin"], variable: "--font-dm", display: "swap" });
+const caveat = Caveat({ subsets: ["latin"], variable: "--font-caveat", display: "swap" });
+const deva = Tiro_Devanagari_Hindi({ subsets: ["devanagari"], weight: "400", variable: "--font-devanagari", display: "swap" });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -87,7 +89,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" className={`${fraunces.variable} ${dm.variable}`}>
+    <html lang="en-IN" className={`${fraunces.variable} ${dm.variable} ${caveat.variable} ${deva.variable}`}>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {children}
