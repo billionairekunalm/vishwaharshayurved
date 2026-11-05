@@ -1,67 +1,116 @@
 /* Hand-drawn SVG art for the welcome gate: namaste woman, Ayurvedic ingredients, carved door mandala. */
 
 export function Namaste({ className = "" }: { className?: string }) {
-  const skin = "#ebb78f", skinDark = "#c98d63", hair = "#1f1410";
+  const skin = "#eab48c", skinDark = "#c98d63", hair = "#1d120d", gold = "#f2c14e";
+  const back = [-84, -60, -36, -12, 12, 36, 60, 84];
+  const front = [-50, -25, 0, 25, 50];
+  const petal = "M0 0 C-17 -12 -18 -38 0 -54 C18 -38 17 -12 0 0Z";
   return (
-    <svg viewBox="0 0 240 300" className={className} role="img" aria-label="A woman greeting you with Namaste">
+    <svg viewBox="0 0 240 300" className={className} role="img" aria-label="A woman greeting you with Namaste, rising from a lotus">
       <defs>
-        <radialGradient id="glow" cx="50%" cy="45%" r="55%"><stop offset="0" stopColor="#ffe6b0" /><stop offset="1" stopColor="#ffe6b0" stopOpacity="0" /></radialGradient>
+        <radialGradient id="nm-glow" cx="50%" cy="45%" r="55%"><stop offset="0" stopColor="#ffe6b0" /><stop offset="1" stopColor="#ffe6b0" stopOpacity="0" /></radialGradient>
+        <linearGradient id="nm-petal-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ffc2d6" /><stop offset="1" stopColor="#fff1f5" /></linearGradient>
+        <linearGradient id="nm-petal-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#f2679a" /><stop offset="1" stopColor="#ffd3e1" /></linearGradient>
+        <linearGradient id="nm-saree" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#23a08b" /><stop offset="1" stopColor="#176b5d" /></linearGradient>
       </defs>
-      <circle cx="120" cy="140" r="130" fill="url(#glow)" />
-      <g className="namaste-bow" style={{ transformOrigin: "120px 300px" }}>
-        {/* hair back + bun + jasmine */}
+      <circle cx="120" cy="140" r="132" fill="url(#nm-glow)" />
+      {/* sparkles */}
+      {[[26, 70, 7], [214, 90, 6], [34, 176, 5], [208, 190, 7], [196, 40, 5]].map(([x, y, r], i) => (
+        <path key={i} className="twinkle" style={{ animationDelay: `${i * 0.5}s`, transformOrigin: `${x}px ${y}px` }} d={`M${x} ${y - r}L${x + r / 3} ${y - r / 3}L${x + r} ${y}L${x + r / 3} ${y + r / 3}L${x} ${y + r}L${x - r / 3} ${y + r / 3}L${x - r} ${y}L${x - r / 3} ${y - r / 3}Z`} fill="#f2c14e" />
+      ))}
+      <g className="namaste-bow" style={{ transformOrigin: "120px 290px" }}>
+        {/* long hair behind shoulders, bun, jasmine */}
+        <path d="M76 96 C62 150 78 180 98 184 L142 184 C162 180 178 150 164 96Z" fill={hair} />
         <ellipse cx="120" cy="90" rx="50" ry="56" fill={hair} />
         <circle cx="120" cy="32" r="22" fill={hair} />
-        {[[100, 42], [110, 28], [124, 24], [138, 32], [146, 46]].map(([x, y], i) => (
-          <g key={i}><circle cx={x} cy={y} r="6" fill="#fffaf0" /><circle cx={x} cy={y} r="2" fill="#f3c969" /></g>
+        {[[98, 44], [108, 29], [122, 24], [136, 29], [146, 44]].map(([x, y], i) => (
+          <g key={i}><circle cx={x} cy={y} r="6" fill="#fffaf0" /><circle cx={x} cy={y} r="2" fill={gold} /></g>
         ))}
         {/* neck */}
-        <rect x="107" y="124" width="26" height="40" fill="#d9a077" />
-        {/* saree body */}
-        <path d="M44 300 C44 212 68 172 108 162 L132 162 C172 172 196 212 196 300Z" fill="#1f8a78" />
-        <path d="M44 300 C44 262 50 236 60 216" stroke="#f2c14e" strokeWidth="5" fill="none" />
-        <path d="M196 300 C196 262 190 236 180 216" stroke="#f2c14e" strokeWidth="5" fill="none" />
+        <rect x="107" y="124" width="26" height="42" fill="#d9a077" />
+        {/* saree */}
+        <path d="M76 300 C70 250 62 206 74 190 C82 174 100 164 108 162 L132 162 C140 164 158 174 166 190 C178 206 170 250 164 300Z" fill="url(#nm-saree)" />
+        <path d="M76 300 C70 262 66 236 70 214" stroke={gold} strokeWidth="4" fill="none" />
+        <path d="M164 300 C170 262 174 236 170 214" stroke={gold} strokeWidth="4" fill="none" />
         {/* blouse */}
-        <path d="M66 196 C76 172 98 162 108 162 L132 162 C142 162 164 172 174 196 L164 210 L76 210Z" fill="#c2415a" />
+        <path d="M70 200 C74 178 98 164 108 162 L132 162 C142 164 166 178 170 200 L162 212 L78 212Z" fill="#c2415a" />
+        <path d="M78 212 L162 212" stroke={gold} strokeWidth="2.5" />
         {/* pallu */}
-        <path d="M84 176 C108 172 120 186 132 204 L198 282 L198 300 L146 300 L96 214Z" fill="#f0a43a" />
-        <path d="M84 176 C108 172 120 186 132 204 L198 282" stroke="#fff3c4" strokeWidth="3" fill="none" />
-        {/* neckline */}
-        <path d="M104 160 Q120 186 136 160Z" fill={skin} />
-        <path d="M108 172 Q120 182 132 172" stroke="#f2c14e" strokeWidth="2.5" fill="none" />
+        <path d="M86 178 C108 172 120 186 130 204 L168 262 L164 300 L118 300 L98 222Z" fill="#f0a43a" />
+        <path d="M86 178 C108 172 120 186 130 204 L168 262" stroke="#fff3c4" strokeWidth="3" fill="none" />
+        <path d="M118 300 L98 222" stroke="#fff3c4" strokeWidth="2" opacity=".7" />
+        {/* neckline + necklace */}
+        <path d="M104 160 Q120 188 136 160Z" fill={skin} />
+        <path d="M105 166 Q120 192 135 166" stroke={gold} strokeWidth="2.4" fill="none" strokeDasharray="1 4" strokeLinecap="round" />
+        <circle cx="120" cy="187" r="3.4" fill={gold} /><circle cx="120" cy="187" r="1.4" fill="#c81d3a" />
         {/* arms into namaste */}
-        <path d="M78 198 L70 224" stroke="#c2415a" strokeWidth="26" strokeLinecap="round" />
-        <path d="M162 198 L170 224" stroke="#c2415a" strokeWidth="26" strokeLinecap="round" />
-        <path d="M72 228 L66 252 L112 220" stroke={skin} strokeWidth="18" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <path d="M168 228 L174 252 L128 220" stroke={skin} strokeWidth="18" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        {/* bangles */}
-        <circle cx="76" cy="244" r="8" fill="none" stroke="#f2c14e" strokeWidth="3" />
-        <circle cx="164" cy="244" r="8" fill="none" stroke="#f2c14e" strokeWidth="3" />
+        <path d="M80 198 L74 222" stroke="#c2415a" strokeWidth="24" strokeLinecap="round" />
+        <path d="M160 198 L166 222" stroke="#c2415a" strokeWidth="24" strokeLinecap="round" />
+        <path d="M76 226 L72 244 L112 216" stroke={skin} strokeWidth="17" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <path d="M164 226 L168 244 L128 216" stroke={skin} strokeWidth="17" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <circle cx="79" cy="238" r="7.5" fill="none" stroke={gold} strokeWidth="3" />
+        <circle cx="161" cy="238" r="7.5" fill="none" stroke={gold} strokeWidth="3" />
         {/* joined palms */}
-        <path d="M120 164 C134 180 137 206 120 232 C103 206 106 180 120 164Z" fill={skin} stroke={skinDark} strokeWidth="2" />
-        <path d="M120 170 V228" stroke={skinDark} strokeWidth="1.8" />
-        {/* head sways gently */}
+        <path d="M120 170 C130 184 132 206 120 228 C108 206 110 184 120 170Z" fill={skin} stroke={skinDark} strokeWidth="2" />
+        <path d="M120 175 V224" stroke={skinDark} strokeWidth="1.6" />
+        {/* head */}
         <g className="namaste-head" style={{ transformOrigin: "120px 130px" }}>
-          <ellipse cx="86" cy="96" rx="5" ry="8" fill={skin} />
-          <ellipse cx="154" cy="96" rx="5" ry="8" fill={skin} />
-          <circle cx="86" cy="108" r="3.5" fill="#f2c14e" />
-          <circle cx="154" cy="108" r="3.5" fill="#f2c14e" />
+          <ellipse cx="86" cy="97" rx="5" ry="8" fill={skin} /><ellipse cx="154" cy="97" rx="5" ry="8" fill={skin} />
+          <circle cx="86" cy="106" r="2.6" fill={gold} /><circle cx="154" cy="106" r="2.6" fill={gold} />
+          <path d="M86 108 l-4.5 9 h9Z" fill={gold} /><path d="M154 108 l-4.5 9 h9Z" fill={gold} />
           <ellipse cx="120" cy="90" rx="34" ry="40" fill={skin} />
           <path d="M84 84 C84 46 156 46 156 84 C142 64 98 64 84 84Z" fill={hair} />
-          <path d="M120 52 V66" stroke="#3a2418" strokeWidth="2" />
+          <path d="M120 52 V62" stroke="#3a2418" strokeWidth="2" />
+          <path d="M120 62 l0 0" stroke={gold} />
+          <circle cx="120" cy="65" r="2.6" fill={gold} /><circle cx="120" cy="65" r="1" fill="#c81d3a" />
           <path d="M100 82 Q108 76 116 80M124 80 Q132 76 140 82" stroke="#2a1810" strokeWidth="2.6" strokeLinecap="round" fill="none" />
-          <path d="M101 93 Q108 99 115 93M125 93 Q132 99 139 93" stroke="#2a1810" strokeWidth="2.6" strokeLinecap="round" fill="none" />
+          <path d="M101 93 Q108 99.5 115 93M125 93 Q132 99.5 139 93" stroke="#2a1810" strokeWidth="2.6" strokeLinecap="round" fill="none" />
+          <path d="M101 93 l-3 -2M115 93 l2.5 -2.2M125 93 l-2.5 -2.2M139 93 l3 -2" stroke="#2a1810" strokeWidth="1.6" strokeLinecap="round" />
+          <path d="M103 88 Q108 85 113 88M127 88 Q132 85 137 88" stroke="#d98a8a" strokeWidth="2" strokeLinecap="round" opacity=".5" fill="none" />
           <path d="M120 94 Q117 104 121 106" stroke={skinDark} strokeWidth="2" strokeLinecap="round" fill="none" />
-          <path d="M108 115 Q120 127 132 115" stroke="#b0413e" strokeWidth="3.4" strokeLinecap="round" fill="none" />
-          <circle cx="120" cy="72" r="3.2" fill="#c81d3a" />
-          <circle cx="102" cy="108" r="7" fill="#f08a8a" opacity=".22" />
-          <circle cx="138" cy="108" r="7" fill="#f08a8a" opacity=".22" />
+          <circle cx="114" cy="103" r="1.5" fill={gold} />
+          <path d="M107 114 Q114 110.5 120 112.5 Q126 110.5 133 114 Q120 127 107 114Z" fill="#c4445a" />
+          <circle cx="120" cy="75" r="3.2" fill="#c81d3a" />
+          <circle cx="101" cy="108" r="7" fill="#f08a8a" opacity=".22" /><circle cx="139" cy="108" r="7" fill="#f08a8a" opacity=".22" />
         </g>
+      </g>
+      {/* lotus she rises from (hides the cut, so nothing looks cropped) */}
+      <g transform="translate(120 304)">
+        {back.map((a) => <path key={"b" + a} transform={`rotate(${a}) scale(1.15)`} d={petal} fill="url(#nm-petal-b)" stroke="#fff" strokeWidth=".8" />)}
+        {front.map((a) => <path key={"f" + a} transform={`rotate(${a}) scale(.95)`} d={petal} fill="url(#nm-petal-f)" stroke="#fff" strokeWidth=".8" />)}
+        <ellipse cx="0" cy="-2" rx="16" ry="5" fill="#f6c453" opacity=".9" />
       </g>
     </svg>
   );
 }
 
+export function Toran({ className = "" }: { className?: string }) {
+  const cols = ["#f08a1c", "#ffb81f", "#f26a1b", "#ffc83d"];
+  const strands = 12, W = 1200, step = W / strands;
+  const balls: { x: number; y: number; c: string; r: number }[] = [];
+  const tassels: { x: number; y: number }[] = [];
+  for (let s = 0; s < strands; s++) {
+    const x0 = s * step, x1 = x0 + step, sag = 34;
+    for (let k = 0; k <= 8; k++) {
+      const t = k / 8, x = x0 + (x1 - x0) * t, y = 8 + 4 * sag * t * (1 - t) * 0.5 * 2;
+      balls.push({ x, y, c: cols[(s * 3 + k) % 4], r: 6.5 });
+    }
+    tassels.push({ x: (x0 + x1) / 2, y: 8 + sag });
+  }
+  return (
+    <svg viewBox="0 0 1200 90" preserveAspectRatio="xMidYMin slice" className={className} aria-hidden>
+      <rect width="1200" height="9" fill="#4a2a12" />
+      {balls.map((b, i) => <circle key={i} cx={b.x} cy={b.y} r={b.r} fill={b.c} stroke="#b5560c" strokeWidth=".8" />)}
+      {tassels.map((t, i) => (
+        <g key={i}>
+          <path d={`M${t.x} ${t.y} V${t.y + 22}`} stroke="#4c7a53" strokeWidth="2" />
+          <path d={`M${t.x} ${t.y + 10} q-9 -2 -12 6 q8 4 12 -6 M${t.x} ${t.y + 14} q9 -2 12 6 q-8 4 -12 -6`} fill="#5aa05a" />
+          <circle cx={t.x} cy={t.y + 26} r="5.5" fill={cols[i % 4]} stroke="#b5560c" strokeWidth=".8" />
+        </g>
+      ))}
+    </svg>
+  );
+}
 export type Ing = "Tulsi" | "Neem" | "Haldi" | "Padma" | "Amla" | "Dalchini" | "Kesar" | "Deepam";
 export const INGREDIENTS: Ing[] = ["Tulsi", "Neem", "Haldi", "Padma", "Amla", "Dalchini", "Kesar", "Deepam"];
 

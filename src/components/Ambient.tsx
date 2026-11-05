@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { buzz, HAPTIC } from "@/lib/haptic";
-import { INGREDIENTS, Ingredient, Mandala, Namaste, type Ing } from "./GateArt";
+import { Ingredient, Mandala, Namaste, Toran, type Ing } from "./GateArt";
 
 /* Calm Ayurvedic ambience, synthesised live (no audio files, no licensing):
    tanpura drone pattern + bansuri-style flute phrases in Raag Bhoopali (Sa Re Ga Pa Dha) + soft kalimba notes + singing bowls, through a warm echo and reverb. */
@@ -129,16 +129,23 @@ function startAmbient(): AudioContext {
   return ctx;
 }
 const GREETINGS = ["नमस्ते", "नमस्कार", "Namaste", "स्वागत"];
-const BG: { n: Ing; x: number; y: number; s: number; d: number }[] = [
-  { n: "Tulsi", x: 6, y: 10, s: 54, d: 0 }, { n: "Padma", x: 84, y: 8, s: 64, d: 1 }, { n: "Haldi", x: 4, y: 40, s: 50, d: 2 },
-  { n: "Deepam", x: 90, y: 38, s: 52, d: 0.5 }, { n: "Neem", x: 8, y: 70, s: 58, d: 1.5 }, { n: "Kesar", x: 86, y: 68, s: 52, d: 2.5 },
-  { n: "Amla", x: 22, y: 86, s: 48, d: 1 }, { n: "Dalchini", x: 72, y: 88, s: 52, d: 0 }, { n: "Padma", x: 24, y: 4, s: 40, d: 2 }, { n: "Tulsi", x: 70, y: 3, s: 40, d: 1.2 },
-];
+const BOTTOM: Ing[] = ["Tulsi", "Haldi", "Neem", "Padma", "Amla", "Kesar", "Deepam"];
+const LEFT: Ing[] = ["Tulsi", "Haldi", "Neem", "Amla"];
+const RIGHT: Ing[] = ["Padma", "Deepam", "Kesar", "Dalchini"];
 const wood = "repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 2px,transparent 2px 11px),repeating-linear-gradient(90deg,rgba(255,220,160,.05) 0 1px,transparent 1px 23px),linear-gradient(180deg,#7d4b27,#5a3218 55%,#6d4020)";
+const jaali = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M14 0L28 14L14 28L0 14Z' fill='none' stroke='%23d9a93e' stroke-opacity='.38' stroke-width='1.2'/%3E%3Ccircle cx='14' cy='14' r='1.6' fill='%23d9a93e' fill-opacity='.5'/%3E%3C/svg%3E")`;
+const stud = "radial-gradient(circle at 35% 30%,#ffe9a8,#c8962f 60%,#7a5416)";
+
+function Panel({ cls }: { cls: string }) {
+  return (
+    <div aria-hidden className={`absolute inset-x-[8%] rounded-[1.4rem] border-[3px] border-[#d9a93e]/60 ${cls}`} style={{ backgroundImage: jaali, backgroundColor: "rgba(0,0,0,.2)", boxShadow: "inset 0 0 44px rgba(0,0,0,.5), 0 0 0 2px rgba(0,0,0,.25)" }}>
+      {["left-2 top-2", "right-2 top-2", "left-2 bottom-2", "right-2 bottom-2"].map((p) => <span key={p} className={`absolute h-2.5 w-2.5 rounded-full ${p}`} style={{ background: stud }} />)}
+    </div>
+  );
+}
 
 function Door({ side, open }: { side: "left" | "right"; open: boolean }) {
   const left = side === "left";
-  const gold = "border-[3px] border-[#d9a93e]/60";
   return (
     <motion.div
       className="absolute top-0 h-full w-1/2 overflow-hidden"
@@ -147,14 +154,20 @@ function Door({ side, open }: { side: "left" | "right"; open: boolean }) {
       transition={{ duration: 3, delay: 0.5, ease: [0.45, 0.05, 0.2, 1] }}
     >
       <motion.div aria-hidden className="absolute inset-0 z-10 bg-black" initial={{ opacity: 0 }} animate={{ opacity: open ? 0.6 : 0 }} transition={{ duration: 3, delay: 0.5, ease: "easeIn" }} />
-      <div aria-hidden className={`absolute inset-x-[9%] top-[5%] bottom-[53%] rounded-[1.5rem] ${gold}`} style={{ boxShadow: "inset 0 0 40px rgba(0,0,0,.45), 0 0 0 2px rgba(0,0,0,.25)" }} />
-      <div aria-hidden className={`absolute inset-x-[9%] top-[53%] bottom-[5%] rounded-[1.5rem] ${gold}`} style={{ boxShadow: "inset 0 0 40px rgba(0,0,0,.45), 0 0 0 2px rgba(0,0,0,.25)" }} />
-      {/* brass studs along the seam */}
+      <Panel cls="top-[9%] bottom-[55%]" />
+      <Panel cls="top-[47%] bottom-[5%]" />
       <div aria-hidden className={`absolute top-0 h-full w-4 ${left ? "right-1" : "left-1"}`} style={{ background: "radial-gradient(circle,#ffe9a8 0 32%,#a9781f 58%,transparent 62%) 0 0/100% 34px repeat-y" }} />
-      {/* half mandala on each door */}
-      <div aria-hidden className="absolute top-1/2 aspect-square -translate-y-1/2" style={{ width: "min(110vh, 170%)", [left ? "right" : "left"]: 0, transform: `translate(${left ? "50%" : "-50%"},-50%)` }}>
+      <div aria-hidden className="absolute top-1/2 aspect-square" style={{ width: "min(110vh, 170%)", [left ? "right" : "left"]: 0, transform: `translate(${left ? "50%" : "-50%"},-50%)` }}>
         <Mandala className="h-full w-full drop-shadow-[0_4px_10px_rgba(0,0,0,.5)]" />
       </div>
+    </motion.div>
+  );
+}
+
+function Float({ n, size, delay }: { n: Ing; size: string; delay: number }) {
+  return (
+    <motion.div initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 + delay * 0.12, type: "spring", damping: 12 }}>
+      <Ingredient name={n} className={`drift ${size} drop-shadow-[0_6px_8px_rgba(0,0,0,.5)]`} />
     </motion.div>
   );
 }
@@ -181,10 +194,10 @@ export default function Ambient() {
     setTimeout(() => { (window as unknown as { __doorsOpen?: boolean }).__doorsOpen = true; window.dispatchEvent(new Event("doors-open")); buzz(HAPTIC.bloom); }, 2300);
     setTimeout(() => setPhase("gone"), 4200);
   };
-  // Not tapped within 4.5s → doors open on their own. Browsers only allow sound after a touch,
-  // so the music starts at the visitor's first tap / key press instead.
+  // Not tapped within 4.5s → doors open on their own (add ?hold to the URL to keep them closed while previewing).
   useEffect(() => {
-    const t = setTimeout(() => openDoors(false), 4500);
+    const hold = new URLSearchParams(window.location.search).has("hold");
+    const t = hold ? undefined : setTimeout(() => openDoors(false), 4500);
     // Try to start music the moment the page opens. If the browser blocks it (most do until a touch),
     // retry on the visitor's first touch / tap / key press, then stop listening once it is playing.
     sound();
@@ -199,53 +212,63 @@ export default function Ambient() {
     return () => { clearTimeout(t); ev.forEach((e) => window.removeEventListener(e, unlock)); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const enter = () => openDoors(true);  const open = phase === "opening";
+  const enter = () => openDoors(true);
+  const open = phase === "opening";
   if (phase === "gone") return null;
   return (
     <div id="gate" role="dialog" aria-modal aria-label="Welcome to Vishwaharsh Ayurved" className="fixed inset-0 z-[100] overflow-hidden" style={{ perspective: "1800px", pointerEvents: open ? "none" : "auto" }}>
       <noscript><style>{`#gate{display:none}`}</style></noscript>
       <Door side="left" open={open} />
       <Door side="right" open={open} />
-      {/* seam of light */}
-      <motion.div aria-hidden className="absolute inset-y-0 left-1/2 w-[260px] -ml-[130px]" style={{ background: "linear-gradient(90deg,transparent,rgba(255,233,168,.95),transparent)", willChange: "transform, opacity" }} initial={{ opacity: 0.2, scaleX: 0.03 }} animate={open ? { opacity: [0.2, 0.85, 0], scaleX: [0.03, 0.7, 1.6] } : { opacity: 0.2, scaleX: 0.03 }} transition={{ duration: 3, delay: 0.5, ease: "easeOut" }} />
+      <motion.div aria-hidden className="absolute inset-y-0 left-1/2 -ml-[130px] w-[260px]" style={{ background: "linear-gradient(90deg,transparent,rgba(255,233,168,.95),transparent)", willChange: "transform, opacity" }} initial={{ opacity: 0.2, scaleX: 0.03 }} animate={open ? { opacity: [0.2, 0.85, 0], scaleX: [0.03, 0.7, 1.6] } : { opacity: 0.2, scaleX: 0.03 }} transition={{ duration: 3, delay: 0.5, ease: "easeOut" }} />
 
-      {/* ingredients floating on the doors */}
-      <motion.div aria-hidden className="absolute inset-0" animate={{ opacity: open ? 0 : 1 }} transition={{ duration: 0.7 }}>
-        {BG.map((b, i) => (
-          <motion.div key={i} initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 + i * 0.1, type: "spring", damping: 12 }}
-            className="drift absolute drop-shadow-[0_6px_8px_rgba(0,0,0,.45)]" style={{ left: `${b.x}%`, top: `${b.y}%`, width: b.s, animationDelay: `${b.d}s` }}>
-            <Ingredient name={b.n} className="h-full w-full" />
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* welcome medallion */}
-      <div className="absolute inset-0 grid place-items-center px-3">
-        <motion.div
-          initial={{ opacity: 0, y: 40, scale: 0.92 }} animate={open ? { opacity: 0, y: -30, scale: 0.9 } : { opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: open ? 0.9 : 1.2, delay: open ? 0 : 0.2, ease: open ? [0.4, 0, 0.2, 1] : [0.16, 1, 0.3, 1] }}
-          className="relative w-[min(92vw,400px)] max-h-[96svh] overflow-hidden bg-[linear-gradient(180deg,#fffaf0,#f6ecd9)] px-6 pb-6 pt-4 text-center shadow-[0_30px_80px_rgba(0,0,0,.55),0_0_0_4px_rgba(217,169,62,.7),0_0_0_9px_rgba(90,50,24,.6)]"
-          style={{ borderRadius: "200px 200px 28px 28px" }}
-        >
-          <div className="relative mx-auto h-[190px] w-[170px] sm:h-[240px] sm:w-[215px]">
-            <Namaste className="h-full w-full" />
-            <AnimatePresence mode="wait">
-              <motion.span key={g} initial={{ opacity: 0, y: 8, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4 }}
-                className="display absolute -right-10 top-0 rounded-2xl rounded-bl-sm bg-white px-3 py-1.5 text-lg font-semibold text-saffron shadow-lg sm:-right-16 sm:text-xl" lang={g === 2 ? "en" : "hi"}>
-                🙏 {GREETINGS[g]}
-              </motion.span>
-            </AnimatePresence>
-          </div>
-          <div className="mt-1 flex items-center justify-center gap-2.5">
-            <Image src="/logo.png" alt="" width={56} height={56} priority className="h-12 w-12 object-contain sm:h-14 sm:w-14" />
-            <h1 className="display text-2xl font-semibold leading-none sm:text-3xl">Vishwaharsh <span className="text-leaf">Ayurved</span></h1>
-          </div>
-          <p lang="mr" className="mt-1.5 text-sm text-ink/55">विश्वहर्ष आयुर्वेद</p>
-          <p className="mt-1 text-xs text-ink/50">Healing body, mind and soul</p>
-          <button autoFocus onClick={enter} className="btn btn-dark mt-4 !px-8">Enter <span aria-hidden>✦</span></button>
-          <p className="mt-3 text-[11px] text-ink/45">🔊 Tap Enter for sound · Tulsi · Neem · Haldi · Amla · Kesar</p>
+      {/* everything below sits in its own zone, so nothing can overlap or be cropped */}
+      <motion.div className="absolute inset-0" animate={{ opacity: open ? 0 : 1 }} transition={{ duration: 0.8 }}>
+        {/* top: marigold toran */}
+        <motion.div aria-hidden initial={{ y: -60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-x-0 top-0 z-20 h-[8svh] min-h-[48px]">
+          <Toran className="h-full w-full drop-shadow-[0_6px_6px_rgba(0,0,0,.45)]" />
         </motion.div>
-      </div>
+        {/* bottom row of ingredients (phones and tablets) */}
+        <div aria-hidden className="absolute inset-x-0 bottom-0 flex h-[11svh] items-end pb-[1.2svh] justify-around px-3 lg:hidden">
+          {BOTTOM.map((n, i) => <Float key={n} n={n} delay={i} size="h-[min(6.4svh,46px)] w-[min(6.4svh,46px)]" />)}
+        </div>
+        {/* side columns (desktop) */}
+        {([[LEFT, "left-[5%]"], [RIGHT, "right-[5%]"]] as const).map(([list, pos]) => (
+          <div key={pos} aria-hidden className={`absolute inset-y-[16%] hidden flex-col items-center justify-between lg:flex ${pos}`}>
+            {list.map((n, i) => <Float key={n} n={n} delay={i} size="h-16 w-16 xl:h-20 xl:w-20" />)}
+          </div>
+        ))}
+
+        {/* welcome medallion */}
+        <div className="absolute inset-x-0 bottom-[12svh] top-[8svh] flex items-center justify-center px-3 lg:bottom-[3svh] lg:top-[9svh]">
+          <motion.div
+            initial={{ opacity: 0, y: 40, scale: 0.94 }} animate={open ? { opacity: 0, y: -30, scale: 0.92 } : { opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: open ? 0.9 : 1.2, delay: open ? 0 : 0.2, ease: open ? [0.4, 0, 0.2, 1] : [0.16, 1, 0.3, 1] }}
+            className="relative flex h-full max-h-[700px] w-[min(92vw,400px)] flex-col items-center bg-[linear-gradient(180deg,#fffaf0,#f6ecd9)] px-5 pb-4 pt-7 text-center shadow-[0_30px_80px_rgba(0,0,0,.55),0_0_0_4px_rgba(217,169,62,.7),0_0_0_9px_rgba(90,50,24,.6)]"
+            style={{ borderRadius: "200px 200px 28px 28px" }}
+          >
+            {/* woman: takes whatever height is left, always fully visible */}
+            <div className="relative min-h-0 w-full flex-1">
+              <Namaste className="absolute inset-0 h-full w-full" />
+            </div>
+            {/* greeting line (no overlap with her) */}
+            <div className="relative mt-1 h-9 w-full shrink-0" aria-live="polite">
+              <AnimatePresence mode="wait">
+                <motion.p key={g} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4 }}
+                  className="font-deva absolute inset-0 text-3xl leading-9 text-saffron" lang={g === 2 ? "en" : "hi"}>{g === 2 ? <span className="font-script text-4xl">Namaste 🙏</span> : <>🙏 {GREETINGS[g]}</>}</motion.p>
+              </AnimatePresence>
+            </div>
+            <div className="flex shrink-0 items-center justify-center gap-2.5">
+              <Image src="/logo.png" alt="" width={56} height={56} priority className="h-11 w-11 object-contain sm:h-12 sm:w-12" />
+              <h1 className="display whitespace-nowrap text-2xl font-semibold leading-none sm:text-[1.65rem]">Vishwaharsh <span className="text-leaf">Ayurved</span></h1>
+            </div>
+            <p lang="mr" className="mt-1 shrink-0 text-sm text-ink/55">विश्वहर्ष आयुर्वेद</p>
+            <p className="short-hide shrink-0 text-xs text-ink/50">Healing body, mind and soul</p>
+            <button autoFocus onClick={enter} className="btn btn-dark mt-3 shrink-0 !px-8 !py-3">Enter <span aria-hidden>✦</span></button>
+            <p className="short-hide mt-2 shrink-0 text-[11px] text-ink/45">🔊 Tap Enter for sound</p>
+          </motion.div>
+        </div>
+      </motion.div>
     </div>
   );
 }

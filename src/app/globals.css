@@ -91,3 +91,8 @@ details[open] .plus { transform: rotate(45deg); }
 @keyframes flicker { 50% { transform: scale(1, 1.14) skewX(3deg); } }
 .flame { animation: flicker .9s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .namaste-bow, .namaste-head, .drift, .flame { animation: none; } }
+
+@keyframes twinkle { 0%, 100% { opacity: .25; transform: scale(.7); } 50% { opacity: 1; transform: scale(1.15); } }
+.twinkle { animation: twinkle 2.6s ease-in-out infinite; }
+@media (max-height: 600px) { .short-hide { display: none; } }
+@media (prefers-reduced-motion: reduce) { .twinkle { animation: none; } }
