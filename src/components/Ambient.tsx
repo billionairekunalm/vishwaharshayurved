@@ -213,7 +213,7 @@ export default function Ambient() {
   // Not tapped within 4.5s → doors open on their own (add ?hold to the URL to keep them closed while previewing).
   useEffect(() => {
     const hold = new URLSearchParams(window.location.search).has("hold");
-    const t = hold ? undefined : setTimeout(() => openDoors(false), 4500);
+    const t = hold ? undefined : setTimeout(() => openDoors(false), 5500);
     // Try to start music the moment the page opens. If the browser blocks it (most do until a touch),
     // retry on the visitor's first touch / tap / key press, then stop listening once it is playing.
     sound();
@@ -275,7 +275,7 @@ export default function Ambient() {
               </AnimatePresence>
             </div>
             <div className="flex shrink-0 items-center justify-center gap-2.5">
-              <Image src="/logo.png" alt="" width={56} height={56} priority className="h-11 w-11 object-contain sm:h-12 sm:w-12" />
+              <Image src="/logo.png" alt="" width={128} height={128} priority className="h-11 w-11 object-contain sm:h-12 sm:w-12" />
               <h1 className="display whitespace-nowrap text-2xl font-semibold leading-none sm:text-[1.65rem]">Vishwaharsh <span className="text-leaf">Ayurved</span></h1>
             </div>
             <p lang="mr" className="mt-1 shrink-0 text-sm text-ink/55">विश्वहर्ष आयुर्वेद</p>

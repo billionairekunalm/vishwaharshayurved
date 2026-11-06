@@ -65,6 +65,8 @@ const jsonLd = {
         { "@type": "OpeningHoursSpecification", dayOfWeek: [...days, "Sunday"], opens: "17:00", closes: "21:00" },
       ],
       physician: { "@id": `${SITE_URL}/#doctor` },
+      geo: { "@type": "GeoCoordinates", latitude: clinic.geo.lat, longitude: clinic.geo.lng },
+      hasMap: clinic.mapUrl,
       sameAs: ["https://www.instagram.com/harshadamalgepatl", "https://www.instagram.com/mindeaseayurved"],
     },
     {

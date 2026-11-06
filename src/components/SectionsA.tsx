@@ -26,7 +26,7 @@ export function Hero() {
     <header id="home" className="panel mx-3 mt-3 overflow-hidden sm:mx-6 sm:mt-5">
       <nav aria-label="Main" className="relative z-30 flex items-center justify-between px-5 py-5 sm:px-10">
         <a href="#home" className="flex items-center gap-2.5" aria-label={clinic.name}>
-          <Image src="/logo.png" alt="" width={44} height={44} className="h-11 w-11 object-contain" />
+          <Image src="/logo.png" alt="" width={96} height={96} className="h-11 w-11 object-contain" />
           <span className="display text-xl font-semibold">Vishwaharsh <span className="text-leaf">Ayurved</span></span>
         </a>
         <ul className="hidden items-center gap-7 text-sm font-medium whitespace-nowrap text-ink/70 xl:flex">

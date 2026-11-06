@@ -31,6 +31,9 @@ export const clinic = {
     instagram: ["@harshadamalgepatl", "@mindeaseayurved"],
     facebook: "Harshada Malge",
   },
+  // Exact pin supplied by the clinic (Google Maps place "Vishwaharsh Ayurved")
+  mapUrl: "https://maps.app.goo.gl/CYkYa5wbhvq6TuhM6",
+  geo: { lat: 18.6413827, lng: 73.7632568 },
   consultationFeeDisplay: "On consultation",
   followUpNote:
     "We do not charge consultation fees for follow-up patients — they only pay for the medicines.",

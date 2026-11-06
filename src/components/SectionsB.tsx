@@ -318,7 +318,7 @@ export function Contact() {
           <address className="mt-8 space-y-4 not-italic">
             <Reveal><a href={`tel:+91${clinic.phone}`} className="glass flex items-center gap-4 rounded-2xl p-4 transition hover:-translate-y-1"><span className="text-2xl">📞</span><span><b>{clinic.phoneDisplay}</b><br /><span className="text-sm text-ink/55">Call or WhatsApp</span></span></a></Reveal>
             <Reveal delay={0.05}><a href={`mailto:${clinic.email}`} className="glass flex items-center gap-4 rounded-2xl p-4 transition hover:-translate-y-1"><span className="text-2xl">✉️</span><span><b>{clinic.email}</b></span></a></Reveal>
-            <Reveal delay={0.1}><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(clinic.address.full)}`} target="_blank" rel="noopener" className="glass flex items-center gap-4 rounded-2xl p-4 transition hover:-translate-y-1"><span className="text-2xl">📍</span><span><b>{clinic.address.line1}</b><br /><span className="text-sm text-ink/55">{clinic.address.line2}, {clinic.address.line3}</span></span></a></Reveal>
+            <Reveal delay={0.1}><a href={clinic.mapUrl} target="_blank" rel="noopener" className="glass flex items-center gap-4 rounded-2xl p-4 transition hover:-translate-y-1"><span className="text-2xl">📍</span><span><b>{clinic.address.line1}</b><br /><span className="text-sm text-ink/55">{clinic.address.line2}, {clinic.address.line3}</span></span></a></Reveal>
             <Reveal delay={0.15}><div className="glass rounded-2xl p-4"><p className="font-semibold">🕒 Clinic hours</p>{clinic.timings.map((t, i) => <p key={i} className="text-sm text-ink/65">{t.day}: {t.hours}</p>)}</div></Reveal>
           </address>
         </div>
@@ -352,7 +352,7 @@ export function Footer() {
   return (
     <footer className="mx-3 mb-3 mt-8 rounded-[2.25rem] bg-ink px-6 py-10 text-white max-sm:pb-28 sm:py-14 sm:mx-6 sm:px-10">
       <div className="grid gap-10 md:grid-cols-3">
-        <div><div className="mb-3 grid h-16 w-16 place-items-center rounded-2xl bg-white"><Image src="/logo.png" alt="" width={48} height={48} className="h-12 w-12 object-contain" /></div><p className="display text-3xl font-semibold">{clinic.name}</p><p lang="mr" className="mt-1 text-white/60">{clinic.nameDevanagari}</p><p className="mt-4 max-w-xs text-sm text-white/60">{clinic.tagline}. Personalised Ayurveda in Chinchwad, Pimpri-Chinchwad.</p></div>
+        <div><div className="mb-3 grid h-16 w-16 place-items-center rounded-2xl bg-white"><Image src="/logo.png" alt="" width={96} height={96} className="h-12 w-12 object-contain" /></div><p className="display text-3xl font-semibold">{clinic.name}</p><p lang="mr" className="mt-1 text-white/60">{clinic.nameDevanagari}</p><p className="mt-4 max-w-xs text-sm text-white/60">{clinic.tagline}. Personalised Ayurveda in Chinchwad, Pimpri-Chinchwad.</p></div>
         <div className="text-sm text-white/70"><p className="mb-3 font-semibold text-white">Visit</p><p>{clinic.address.full}</p><p className="mt-3">{clinic.phoneDisplay}</p></div>
         <div className="text-sm text-white/70"><p className="mb-3 font-semibold text-white">Follow</p>{clinic.social.instagram.map((h) => <a key={h} className="block hover:text-white" href={`https://instagram.com/${h.slice(1)}`} target="_blank" rel="noopener">Instagram {h}</a>)}</div>
       </div>
