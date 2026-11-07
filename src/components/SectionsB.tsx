@@ -450,7 +450,20 @@ export function Footer() {
         <div className="text-sm text-white/70"><p className="mb-3 font-semibold text-white">Visit</p><p>{clinic.address.full}</p><p className="mt-3">{clinic.phoneDisplay}</p></div>
         <div className="text-sm text-white/70"><p className="mb-3 font-semibold text-white">Follow</p>{clinic.social.instagram.map((h) => <a key={h} className="group mb-2 flex items-center gap-2.5 hover:text-white" href={`https://instagram.com/${h.slice(1)}`} target="_blank" rel="noopener" aria-label={`Instagram ${h}`}><span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-[#feda75] via-[#d62976] to-[#4f5bd5] text-white transition group-hover:scale-110"><InstagramIcon className="h-4 w-4" /></span>{h}</a>)}</div>
       </div>
-      <p className="mt-10 border-t border-white/10 pt-6 text-xs text-white/40">© {new Date().getFullYear()} {clinic.name}. Ayurvedic care is personalised after consultation and is not a substitute for emergency medical care.</p>
+      <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs text-white/40">© {new Date().getFullYear()} {clinic.name}. Ayurvedic care is personalised after consultation and is not a substitute for emergency medical care.</p>
+        <a
+          href="https://intellobyte.com"
+          target="_blank"
+          rel="noopener"
+          title="Intellobyte builds websites like this one. Visit intellobyte.com"
+          className="group inline-flex shrink-0 items-center gap-2 self-start rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs text-white/70 transition hover:border-white/40 hover:bg-white/10 hover:text-white sm:self-auto"
+        >
+          <span aria-hidden className="text-saffron transition group-hover:rotate-12">✦</span>
+          <span>Website made by <b className="font-semibold text-white">Intellobyte</b></span>
+          <span aria-hidden className="transition group-hover:translate-x-0.5">↗</span>
+        </a>
+      </div>
     </footer>
   );
 }
