@@ -1,7 +1,7 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { clinic, doctor, faqs, facilities, patientJourney, products, servicesOffered } from "@/data/clinic";
 import { Heading, Reveal, Squiggle, Tilt, InstagramIcon } from "./ui";
 import { wa } from "./SectionsA";
@@ -299,48 +299,142 @@ export function FAQ() {
 }
 
 /* ------------------------------ CONTACT ------------------------------ */
+const CONCERNS: [string, string][] = [["Mental health / stress", "🧠"], ["Diabetes", "🩸"], ["Garbhsanskar", "🤰"], ["Beejsanskar", "🌱"], ["Panchakarma", "🌿"], ["General consultation", "🩺"]];
+const MODES: [string, string, string][] = [["In clinic", "🏥", "Visit us"], ["Online / video", "💻", "From home"], ["Home visit", "🏡", "We come to you"]];
+const TIMES: [string, string, string][] = [["Morning", "🌅", "10 AM – 1 PM"], ["Evening", "🌇", "5 PM – 9 PM"]];
+
+type ChoiceProps = { name: string; value: string; icon: string; label: string; sub?: string; defaultChecked?: boolean; checked?: boolean; disabled?: boolean; onChange?: () => void };
+function Choice({ name, value, icon, label, sub, defaultChecked, checked, disabled, onChange }: ChoiceProps) {
+  return (
+    <label className={`relative block cursor-pointer ${disabled ? "pointer-events-none opacity-40" : ""}`}>
+      <input type="radio" name={name} value={value} defaultChecked={defaultChecked} checked={checked} onChange={onChange} disabled={disabled} className="peer sr-only" />
+      <span className="flex h-full items-center gap-2 rounded-2xl border-2 border-ink/10 bg-white px-2.5 py-3 text-[13px] font-semibold transition sm:gap-2.5 sm:px-3.5 sm:text-sm hover:border-leaf/40 peer-checked:border-leaf peer-checked:bg-leaf/10 peer-checked:shadow-[0_10px_22px_-12px_rgba(76,122,83,.8)] peer-focus-visible:ring-4 peer-focus-visible:ring-saffron/40">
+        <span className="text-xl" aria-hidden>{icon}</span>
+        <span className="min-w-0 leading-tight">{label}{sub && <span className="block text-[11px] font-medium text-ink/50">{sub}</span>}</span>
+      </span>
+    </label>
+  );
+}
+
+function Step({ n, title }: { n: number; title: string }) {
+  return (
+    <div className="mb-3 flex items-center gap-2.5">
+      <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-xs font-bold text-white">{n}</span>
+      <p className="text-sm font-bold uppercase tracking-wider text-ink/70">{title}</p>
+    </div>
+  );
+}
+
+const input = "w-full rounded-2xl border-2 border-ink/10 bg-white py-3 pl-11 pr-4 outline-none transition placeholder:text-ink/30 focus:border-leaf focus:ring-4 focus:ring-leaf/15 user-invalid:border-rose-400 user-invalid:ring-4 user-invalid:ring-rose-100";
+function Field({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-ink/50">{label}</span>
+      <span className="relative block"><span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-lg" aria-hidden>{icon}</span>{children}</span>
+    </label>
+  );
+}
+
 export function Contact() {
   const [sent, setSent] = useState(false);
+  const [today, setToday] = useState("");
+  const [time, setTime] = useState("Morning");
+  const [sunday, setSunday] = useState(false);
+  useEffect(() => { const d = new Date(); setToday(new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10)); }, []);
+  const onDate = (v: string) => {
+    const isSun = !!v && new Date(v + "T00:00").getDay() === 0; // Sunday: evening only
+    setSunday(isSun);
+    if (isSun) setTime("Evening");
+  };
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
-    const msg = `Hello, I would like to book an appointment at ${clinic.name}.\nName: ${f.name}\nPhone: ${f.phone}\nConcern: ${f.concern}\nPreferred date: ${f.date || "flexible"}\nMode: ${f.mode}\n${f.note || ""}`;
+    const msg = `Hello, I would like to book an appointment at ${clinic.name}.\n\nName: ${f.name}\nPhone: +91 ${f.phone}\nConcern: ${f.concern}\nMode: ${f.mode}\nPreferred date: ${f.date || "flexible"}\nPreferred time: ${time}\n${f.note ? `Notes: ${f.note}` : ""}`;
     buzz(HAPTIC.success);
     window.open(wa(msg), "_blank", "noopener");
     setSent(true);
   };
-  const field = "w-full rounded-2xl border border-ink/10 bg-white px-4 py-3 outline-none transition focus:border-leaf focus:ring-4 focus:ring-leaf/15";
   return (
     <section id="contact" className="panel mx-3 mt-3 sm:mt-8 px-5 py-9 sm:mx-6 sm:px-10 sm:py-16 lg:py-24" aria-labelledby="contact-h">
-      <div className="grid gap-12 lg:grid-cols-2">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
           <div id="contact-h"><Heading eyebrow="Book appointment" sub="Share your concern and we will call you within 1 working day to confirm your appointment.">Begin your <em className="text-leaf not-italic">healing</em> journey</Heading></div>
           <address className="mt-8 space-y-4 not-italic">
             <Reveal><a href={`tel:+91${clinic.phone}`} className="glass flex items-center gap-4 rounded-2xl p-4 transition hover:-translate-y-1"><span className="text-2xl">📞</span><span><b>{clinic.phoneDisplay}</b><br /><span className="text-sm text-ink/55">Call or WhatsApp</span></span></a></Reveal>
-            <Reveal delay={0.05}><a href={`mailto:${clinic.email}`} className="glass flex items-center gap-4 rounded-2xl p-4 transition hover:-translate-y-1"><span className="text-2xl">✉️</span><span><b>{clinic.email}</b></span></a></Reveal>
+            <Reveal delay={0.05}><a href={`mailto:${clinic.email}`} className="glass flex items-center gap-4 rounded-2xl p-4 transition hover:-translate-y-1"><span className="text-2xl">✉️</span><span><b className="break-all">{clinic.email}</b></span></a></Reveal>
             <Reveal delay={0.1}><a href={clinic.mapUrl} target="_blank" rel="noopener" className="glass flex items-center gap-4 rounded-2xl p-4 transition hover:-translate-y-1"><span className="text-2xl">📍</span><span><b>{clinic.address.line1}</b><br /><span className="text-sm text-ink/55">{clinic.address.line2}, {clinic.address.line3}</span></span></a></Reveal>
             <Reveal delay={0.15}><div className="glass rounded-2xl p-4"><p className="font-semibold">🕒 Clinic hours</p>{clinic.timings.map((t, i) => <p key={i} className="text-sm text-ink/65">{t.day}: {t.hours}</p>)}</div></Reveal>
           </address>
         </div>
+
         <Reveal delay={0.1}>
-          <form onSubmit={submit} className="space-y-4 rounded-[2rem] bg-white/70 p-6 shadow-xl sm:p-8" aria-label="Appointment request">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="text-sm font-semibold">Your name<input required name="name" autoComplete="name" className={field + " mt-1"} /></label>
-              <label className="text-sm font-semibold">Phone<input required name="phone" type="tel" inputMode="tel" autoComplete="tel" className={field + " mt-1"} /></label>
+          <div className="overflow-hidden rounded-[2rem] bg-white/80 shadow-[0_30px_70px_-35px_rgba(40,70,45,.6)] ring-1 ring-white">
+            <div className="relative bg-gradient-to-br from-ink via-[#24402c] to-leaf px-6 py-5 text-white sm:px-8">
+              <div aria-hidden className="absolute -right-8 -top-10 h-32 w-32 rounded-full bg-saffron/30 blur-2xl" />
+              <p className="font-script relative text-3xl text-[#ffd9a0]">Book your visit</p>
+              <p className="relative text-sm text-white/70">3 quick steps · we call you back within 1 working day</p>
             </div>
-            <label className="block text-sm font-semibold">Main concern
-              <select name="concern" className={field + " mt-1"}>
-                {["Mental health / stress", "Diabetes", "Garbhsanskar", "Beejsanskar", "Panchakarma", "General consultation"].map((o) => <option key={o}>{o}</option>)}
-              </select>
-            </label>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="text-sm font-semibold">Preferred date<input name="date" type="date" className={field + " mt-1"} /></label>
-              <label className="text-sm font-semibold">Mode<select name="mode" className={field + " mt-1"}><option>In clinic</option><option>Online / video</option><option>Home visit</option></select></label>
-            </div>
-            <label className="block text-sm font-semibold">Anything we should know?<textarea name="note" rows={2} className={field + " mt-1"} /></label>
-            <button className="btn btn-dark w-full justify-center" type="submit">Send on WhatsApp →</button>
-            {sent && <p role="status" className="text-center text-sm text-leaf">Opening WhatsApp — {clinic.postSubmitMessage}</p>}
-          </form>
+
+            <AnimatePresence mode="wait" initial={false}>
+              {sent ? (
+                <motion.div key="ok" initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="grid place-items-center px-6 py-14 text-center sm:px-8" role="status">
+                  <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", damping: 10, delay: 0.1 }} className="grid h-20 w-20 place-items-center rounded-full bg-leaf text-4xl text-white shadow-xl">✓</motion.span>
+                  <p className="display mt-5 text-3xl font-semibold">Thank you!</p>
+                  <p className="mt-2 max-w-sm text-ink/65">WhatsApp has opened with your details. Just press send. {clinic.postSubmitMessage}</p>
+                  <button type="button" onClick={() => setSent(false)} className="btn btn-ghost mt-6">Book another visit</button>
+                </motion.div>
+              ) : (
+                <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onSubmit={submit} className="space-y-7 p-5 sm:p-8" aria-label="Appointment request">
+                  <fieldset>
+                    <legend className="sr-only">What brings you in?</legend>
+                    <Step n={1} title="What brings you in?" />
+                    <div className="flex flex-wrap gap-2 sm:grid sm:grid-cols-2 sm:gap-2.5">
+                      {CONCERNS.map(([c, ic], i) => <Choice key={c} name="concern" value={c} icon={ic} label={c} defaultChecked={i === 0} />)}
+                    </div>
+                  </fieldset>
+
+                  <fieldset>
+                    <legend className="sr-only">How would you like to consult?</legend>
+                    <Step n={2} title="How would you like to consult?" />
+                    <div className="grid grid-cols-3 gap-2.5 max-sm:grid-cols-1">
+                      {MODES.map(([m, ic, sub], i) => <Choice key={m} name="mode" value={m} icon={ic} label={m} sub={sub} defaultChecked={i === 0} />)}
+                    </div>
+                  </fieldset>
+
+                  <div>
+                    <Step n={3} title="Your details" />
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field icon="👤" label="Your name"><input required name="name" autoComplete="name" placeholder="e.g. Anita Patil" className={input} /></Field>
+                      <Field icon="📞" label="Mobile number">
+                        <input required name="phone" type="tel" inputMode="numeric" autoComplete="tel-national" maxLength={10} pattern="[6-9][0-9]{9}" title="Enter a 10-digit Indian mobile number" placeholder="10-digit number" className={input + " pl-[4.6rem]"} />
+                        <span className="pointer-events-none absolute left-11 top-1/2 -translate-y-1/2 text-sm font-semibold text-ink/50">+91</span>
+                      </Field>
+                      <Field icon="📅" label="Preferred date"><input name="date" type="date" min={today} onChange={(e) => onDate(e.target.value)} className={input} /></Field>
+                      <div>
+                        <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-ink/50">Preferred time</span>
+                        <div className="grid grid-cols-2 gap-2">
+                          {TIMES.map(([t, ic, sub]) => <Choice key={t} name="time" value={t} icon={ic} label={t} sub={sub} checked={time === t} onChange={() => setTime(t)} disabled={sunday && t === "Morning"} />)}
+                        </div>
+                        {sunday && <p className="mt-1.5 text-xs text-ink/50">Sundays: evening 5 PM – 9 PM only.</p>}
+                      </div>
+                    </div>
+                    <label className="mt-4 block">
+                      <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-ink/50">Anything we should know? <span className="font-medium normal-case tracking-normal">(optional)</span></span>
+                      <textarea name="note" rows={2} placeholder="Symptoms, current medicines, questions…" className="w-full rounded-2xl border-2 border-ink/10 bg-white px-4 py-3 outline-none transition placeholder:text-ink/30 focus:border-leaf focus:ring-4 focus:ring-leaf/15" />
+                    </label>
+                  </div>
+
+                  <div>
+                    <button className="btn btn-dark w-full justify-center !py-4 text-base" type="submit">
+                      <span aria-hidden className="text-xl">💬</span>
+                      Send request on WhatsApp
+                    </button>
+                    <p className="mt-3 text-center text-xs text-ink/45">🔒 Opens WhatsApp with your details filled in. No payment, no spam.</p>
+                  </div>
+                </motion.form>
+              )}
+            </AnimatePresence>
+          </div>
         </Reveal>
       </div>
     </section>
