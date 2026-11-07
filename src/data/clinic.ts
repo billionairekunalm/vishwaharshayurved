@@ -147,7 +147,7 @@ export const treatments = [
     short:
       "Comprehensive Ayurvedic management of diabetes through diet, herbs, Panchakarma and sustainable lifestyle changes.",
     category: "Lifestyle & Metabolic",
-    image: "/images/herbs.jpg",
+    image: "/images/treat-diabetes.jpg",
     icon: "Activity",
     highlights: [
       "Detailed metabolic & Prakriti assessment",
@@ -175,7 +175,7 @@ export const treatments = [
     short:
       "Ayurvedic care to nurture the physical, mental and spiritual development of the baby during pregnancy.",
     category: "Women's Health",
-    image: "/images/about.jpg",
+    image: "/images/treat-garbhsanskar.jpg",
     icon: "Heart",
     highlights: [
       "Month-wise Ayurvedic guidance for each trimester",
@@ -203,7 +203,7 @@ export const treatments = [
     short:
       "Ayurvedic purification and strengthening of the seed (shukra & aartav) before conception, for a healthy beginning.",
     category: "Women's Health",
-    image: "/images/oil-massage.jpg",
+    image: "/images/treat-beejsanskar.jpg",
     icon: "Sparkles",
     highlights: [
       "Pre-conception detox for both partners",
@@ -259,7 +259,7 @@ export const treatments = [
     short:
       "Personalised Ayurvedic consultation from the comfort of your home, anywhere in India or abroad.",
     category: "Convenience",
-    image: "/images/journey.jpg",
+    image: "/images/treat-online.jpg",
     icon: "Video",
     highlights: [
       "Video consultation with Dr. Harshada Malge",

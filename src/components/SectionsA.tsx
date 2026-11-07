@@ -147,7 +147,7 @@ export function Services() {
           {treatments.map((t, i) => (
             <Reveal key={t.id} delay={(i % 3) * 0.1}>
               <Tilt className="group h-full cursor-pointer overflow-hidden rounded-[1.75rem] bg-white shadow-[0_20px_50px_-25px_rgba(40,70,45,.45)]" onClick={() => setSel(t)}>
-                <div className="relative h-52 overflow-hidden">
+                <div className="relative aspect-[3/2] overflow-hidden">
                   <Image src={t.image} alt={t.name} fill sizes="(min-width:1280px) 30vw, (min-width:640px) 45vw, 90vw" className="object-cover transition duration-700 group-hover:scale-110" />
                   <span className="chip absolute left-4 top-4">{t.category}</span>
                 </div>
