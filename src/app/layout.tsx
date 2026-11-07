@@ -67,7 +67,7 @@ const jsonLd = {
       physician: { "@id": `${SITE_URL}/#doctor` },
       geo: { "@type": "GeoCoordinates", latitude: clinic.geo.lat, longitude: clinic.geo.lng },
       hasMap: clinic.mapUrl,
-      sameAs: ["https://www.instagram.com/harshadamalgepatl", "https://www.instagram.com/mindeaseayurved"],
+      sameAs: ["https://www.instagram.com/harshadamalgepatil", "https://www.instagram.com/mindeaseayurved"],
     },
     {
       "@type": "Physician",

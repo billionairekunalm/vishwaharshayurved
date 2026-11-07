@@ -4,7 +4,7 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { clinic } from "@/data/clinic";
 import { gallery, results, type Media } from "@/data/media";
-import { Heading, Reveal, Tilt } from "./ui";
+import { Heading, Reveal, Tilt, InstagramIcon } from "./ui";
 
 const P = "/clinic/";
 
@@ -149,7 +149,7 @@ export function Stories() {
             ))}
           </div>
           <Reveal delay={0.2}>
-            <a href="https://instagram.com/mindeaseayurved" target="_blank" rel="noopener" className="btn btn-ghost mt-8">More stories on Instagram @mindeaseayurved →</a>
+            <a href="https://instagram.com/mindeaseayurved" target="_blank" rel="noopener" className="btn btn-ghost mt-8"><InstagramIcon className="h-5 w-5 text-[#d62976]" />More stories on Instagram @mindeaseayurved →</a>
           </Reveal>
         </div>
       </div>

@@ -28,7 +28,7 @@ export const clinic = {
   ],
   languages: ["Marathi", "Hindi", "English"],
   social: {
-    instagram: ["@harshadamalgepatl", "@mindeaseayurved"],
+    instagram: ["@harshadamalgepatil", "@mindeaseayurved"],
     facebook: "Harshada Malge",
   },
   // Exact pin supplied by the clinic (Google Maps place "Vishwaharsh Ayurved")
