@@ -157,9 +157,8 @@ export function Stories() {
   );
 }
 
-/* ------------------------------ MAP (loads only when asked) ------------------------------ */
+/* ------------------------------ MAP (always shown; the browser lazy-loads it as you scroll near) ------------------------------ */
 export function MapSection() {
-  const [show, setShow] = useState(false);
   const { lat, lng } = clinic.geo;
   return (
     <section id="map" className="panel mx-3 mt-3 px-5 py-9 sm:mx-6 sm:mt-8 sm:px-10 sm:py-16" aria-labelledby="map-h">
@@ -167,25 +166,13 @@ export function MapSection() {
         <div>
           <div id="map-h"><Heading eyebrow="Find us" sub={clinic.address.full}>Come <em className="text-saffron not-italic">visit</em> us</Heading></div>
           <div className="mt-6 flex flex-wrap gap-3">
-            <button onClick={() => setShow((s) => !s)} className="btn btn-dark" aria-expanded={show}>{show ? "Hide map" : "📍 Show map here"}</button>
-            <a href={clinic.mapUrl} target="_blank" rel="noopener" className="btn btn-ghost">Open in Google Maps ↗</a>
+            <a href={clinic.mapUrl} target="_blank" rel="noopener" className="btn btn-dark">📍 Open in Google Maps ↗</a>
           </div>
         </div>
         <Reveal>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] bg-white shadow-[0_20px_50px_-25px_rgba(40,70,45,.5)] sm:aspect-[16/10]">
-            {show ? (
-              <iframe title="Vishwaharsh Ayurved on Google Maps" className="absolute inset-0 h-full w-full border-0" loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade"
-                src={`https://maps.google.com/maps?q=${lat},${lng}&hl=en&z=17&output=embed`} />
-            ) : (
-              <button onClick={() => setShow(true)} aria-label="Show the map" className="group absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_30%_30%,#e6f0e2,#f7f2e7_60%,#fbe7d8)]">
-                <span aria-hidden className="absolute inset-0 opacity-40" style={{ backgroundImage: "linear-gradient(rgba(76,122,83,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(76,122,83,.18) 1px,transparent 1px)", backgroundSize: "36px 36px" }} />
-                <span className="relative text-center">
-                  <span className="bob mx-auto grid h-16 w-16 place-items-center rounded-full bg-saffron text-3xl shadow-xl transition group-hover:scale-110">📍</span>
-                  <span className="display mt-3 block text-xl font-semibold">Vishwaharsh Ayurved</span>
-                  <span className="text-sm text-ink/55">Tap to load the live map</span>
-                </span>
-              </button>
-            )}
+          <div className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] bg-[#eef0ea] shadow-[0_20px_50px_-25px_rgba(40,70,45,.5)] sm:aspect-[16/10]">
+            <iframe title="Vishwaharsh Ayurved on Google Maps" className="absolute inset-0 h-full w-full border-0" loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade"
+              src={`https://maps.google.com/maps?q=${lat},${lng}&hl=en&z=17&output=embed`} />
           </div>
         </Reveal>
       </div>
