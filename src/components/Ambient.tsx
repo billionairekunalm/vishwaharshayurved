@@ -276,7 +276,7 @@ export default function Ambient() {
             </div>
             <div className="flex shrink-0 items-center justify-center gap-2.5">
               <Image src="/logo.png" alt="" width={128} height={128} priority className="h-11 w-11 object-contain sm:h-12 sm:w-12" />
-              <h1 className="display whitespace-nowrap text-2xl font-semibold leading-none sm:text-[1.65rem]">Vishwaharsh <span className="text-leaf">Ayurved</span></h1>
+              <p className="display whitespace-nowrap text-2xl font-semibold leading-none sm:text-[1.65rem]">Vishwaharsh <span className="text-leaf">Ayurved</span></p>
             </div>
             <p lang="mr" className="mt-1 shrink-0 text-sm text-ink/55">विश्वहर्ष आयुर्वेद</p>
             <p className="short-hide shrink-0 text-xs text-ink/50">Healing body, mind and soul</p>

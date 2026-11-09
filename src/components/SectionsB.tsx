@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { clinic, doctor, faqs, facilities, patientJourney, products, servicesOffered } from "@/data/clinic";
-import { Heading, Reveal, Squiggle, Tilt, InstagramIcon } from "./ui";
+import { Heading, Reveal, Squiggle, Tilt } from "./ui";
 import { wa } from "./SectionsA";
 import { buzz, HAPTIC } from "@/lib/haptic";
 
@@ -438,44 +438,5 @@ export function Contact() {
         </Reveal>
       </div>
     </section>
-  );
-}
-
-/* ------------------------------ FOOTER ------------------------------ */
-export function Footer() {
-  return (
-    <footer className="mx-3 mb-3 mt-8 rounded-[2.25rem] bg-ink px-6 py-10 text-white max-sm:pb-28 sm:py-14 sm:mx-6 sm:px-10">
-      <div className="grid gap-10 md:grid-cols-3">
-        <div><div className="mb-3 grid h-16 w-16 place-items-center rounded-2xl bg-white"><Image src="/logo.png" alt="" width={96} height={96} className="h-12 w-12 object-contain" /></div><p className="display text-3xl font-semibold">{clinic.name}</p><p lang="mr" className="mt-1 text-white/60">{clinic.nameDevanagari}</p><p className="mt-4 max-w-xs text-sm text-white/60">{clinic.tagline}. Personalised Ayurveda in Chinchwad, Pimpri-Chinchwad.</p></div>
-        <div className="text-sm text-white/70"><p className="mb-3 font-semibold text-white">Visit</p><p>{clinic.address.full}</p><p className="mt-3">{clinic.phoneDisplay}</p></div>
-        <div className="text-sm text-white/70"><p className="mb-3 font-semibold text-white">Follow</p>{clinic.social.instagram.map((h) => <a key={h} className="group mb-2 flex items-center gap-2.5 hover:text-white" href={`https://instagram.com/${h.slice(1)}`} target="_blank" rel="noopener" aria-label={`Instagram ${h}`}><span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-[#feda75] via-[#d62976] to-[#4f5bd5] text-white transition group-hover:scale-110"><InstagramIcon className="h-4 w-4" /></span>{h}</a>)}</div>
-      </div>
-      <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-white/40">© {new Date().getFullYear()} {clinic.name}. Ayurvedic care is personalised after consultation and is not a substitute for emergency medical care.</p>
-        <a
-          href="https://intellobyte.com"
-          target="_blank"
-          rel="noopener"
-          title="Intellobyte builds websites like this one. Visit intellobyte.com"
-          className="group inline-flex shrink-0 items-center gap-2 self-start rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs text-white/70 transition hover:border-white/40 hover:bg-white/10 hover:text-white sm:self-auto"
-        >
-          <span aria-hidden className="text-saffron transition group-hover:rotate-12">✦</span>
-          <span>Website made by <b className="font-semibold text-white">Intellobyte</b></span>
-          <span aria-hidden className="transition group-hover:translate-x-0.5">↗</span>
-        </a>
-      </div>
-    </footer>
-  );
-}
-
-/* ------------------------------ MOBILE ACTION BAR ------------------------------ */
-export function MobileBar() {
-  const a = "flex flex-1 items-center justify-center gap-1.5 rounded-full py-3 text-sm font-semibold";
-  return (
-    <nav aria-label="Quick actions" className="glass fixed inset-x-3 bottom-3 z-40 flex gap-2 rounded-full p-1.5 sm:hidden">
-      <a href={`tel:+91${clinic.phone}`} className={`${a} bg-white`}>📞 Call</a>
-      <a href={wa(clinic.whatsappPrefill)} target="_blank" rel="noopener" className={`${a} bg-white`}>💬 WhatsApp</a>
-      <a href="#contact" className={`${a} bg-ink text-white`}>Book</a>
-    </nav>
   );
 }

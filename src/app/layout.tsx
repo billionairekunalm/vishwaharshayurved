@@ -1,18 +1,18 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, DM_Sans, Caveat, Tiro_Devanagari_Hindi } from "next/font/google";
 import "./globals.css";
-import { clinic, doctor, faqs, treatments } from "@/data/clinic";
+import { clinic, doctor, treatments } from "@/data/clinic";
+import { SITE_URL } from "@/lib/seo";
 
 const fraunces = Fraunces({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-fraunces", display: "swap" });
 const dm = DM_Sans({ subsets: ["latin"], variable: "--font-dm", display: "swap" });
 const caveat = Caveat({ subsets: ["latin"], variable: "--font-caveat", display: "swap" });
 const deva = Tiro_Devanagari_Hindi({ subsets: ["devanagari"], weight: "400", variable: "--font-devanagari", display: "swap" });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 const title = "Vishwaharsh Ayurved | Ayurvedic Doctor in Chinchwad, Pimpri-Chinchwad";
 const description =
-  "Dr. Harshada Malge (BAMS, MD Ayurveda) — Ayurvedic clinic in Chinchwad, Pune for mental health, diabetes, Garbhsanskar, Beejsanskar & Panchakarma. Book in-clinic or online consultation.";
+  "Dr. Harshada Malge (BAMS, MD Ayurveda): Ayurvedic clinic in Chinchwad, Pune for mental health, diabetes, Garbhsanskar & Panchakarma. Book in clinic or online.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -82,10 +82,6 @@ const jsonLd = {
       worksFor: { "@id": `${SITE_URL}/#clinic` },
     },
     { "@type": "WebSite", "@id": `${SITE_URL}/#site`, url: SITE_URL, name: clinic.name, inLanguage: "en-IN" },
-    {
-      "@type": "FAQPage",
-      mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-    },
   ],
 };
 

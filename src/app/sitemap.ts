@@ -1,5 +1,16 @@
 import type { MetadataRoute } from "next";
-const U = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+import { areas, services } from "@/data/pages";
+import { abs } from "@/lib/seo";
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [{ url: U, lastModified: new Date(), changeFrequency: "monthly", priority: 1 }];
+  const now = new Date();
+  const page = (path: string, priority: number, changeFrequency: "weekly" | "monthly") => ({ url: abs(path), lastModified: now, changeFrequency, priority });
+  return [
+    page("/", 1, "weekly"),
+    page("/services", 0.9, "monthly"),
+    ...services.map((s) => page(`/services/${s.slug}`, 0.9, "monthly")),
+    page("/doctor", 0.8, "monthly"),
+    page("/areas", 0.7, "monthly"),
+    ...areas.map((a) => page(`/areas/${a.slug}`, 0.8, "monthly")),
+  ];
 }

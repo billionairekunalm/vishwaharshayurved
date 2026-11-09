@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { animate, motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Lenis from "lenis";
 import { buzz, HAPTIC, softTick } from "@/lib/haptic";
@@ -35,6 +35,20 @@ export function InstagramIcon({ className = "h-5 w-5" }: { className?: string })
       <circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none" />
     </svg>
   );
+}
+
+/** Mounts its children only when scrolled near, so heavy things (the 3D library) never slow the first load. */
+export function LazyMount({ children, className = "", margin = "400px" }: { children: React.ReactNode; className?: string; margin?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setOn(true); io.disconnect(); } }, { rootMargin: margin });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [margin]);
+  return <div ref={ref} className={className}>{on ? children : null}</div>;
 }
 
 export function SmoothScroll() {

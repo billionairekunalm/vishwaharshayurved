@@ -19,6 +19,17 @@
 ## Products (dispensed under doctor's guidance)
 Swarnprashan drops, Kumkumadi Tailam, Abhyangini ubtan, Mukhkanti Lepa
 
+## Pages
+- /services/diabetes-treatment: Ayurvedic diabetes management
+- /services/mental-health: anxiety, depression, stress, ADHD and autism support with counselling
+- /services/garbhsanskar: prenatal wellness
+- /services/beejsanskar: preconception care
+- /services/panchakarma: detox and rejuvenation therapy
+- /services/leech-therapy: leech therapy (Jalaukavacharana)
+- /services/online-consultation: video consultation with medicine courier
+- /doctor: Dr. Harshada Malge, qualifications and registration
+- /areas/chinchwad, /areas/pimpri-chinchwad, /areas/walhekarwadi, /areas/akurdi, /areas/nigdi, /areas/moshi, /areas/pune: how patients from each area reach the clinic
+
 ## Note
 Ayurvedic care here is personalised after consultation; nothing on the site is a substitute for emergency or allopathic care.
 

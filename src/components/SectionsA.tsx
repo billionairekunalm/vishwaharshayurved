@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { clinic, doctor, navLinks, story, treatments, trustStats } from "@/data/clinic";
-import { Counter, Heading, Reveal, Squiggle, Tilt } from "./ui";
+import { Counter, Heading, LazyMount, Reveal, Squiggle, Tilt } from "./ui";
 import { buzz, HAPTIC } from "@/lib/haptic";
 import { Ingredient } from "./GateArt";
 import { ArrowIcon, CareLine, LeafLine, LotusLine, MortarLine, PhoneIcon, WhatsAppIcon } from "./HeroIcons";
@@ -78,7 +79,7 @@ export function Hero() {
           <h1 className="display mt-6 text-[2.7rem] font-medium leading-[1.04] tracking-tight sm:text-6xl xl:text-[4.5rem]">
             <span className="relative inline-block">
               {"Heal the root,".split(" ").map((w, i) => (
-                <motion.span key={i} className="mr-[.25em] inline-block" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 + i * 0.1, duration: 0.9, ease }}>{w}</motion.span>
+                <Fragment key={i}><motion.span className="mr-[.25em] inline-block" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 + i * 0.1, duration: 0.9, ease }}>{w}</motion.span>{" "}</Fragment>
               ))}
               <motion.span aria-hidden initial={{ opacity: 0, scale: 0.4, rotate: -30 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ delay: 1, duration: 0.8, ease }} className="absolute -right-10 -top-3 hidden sm:block">
                 <Ingredient name="Tulsi" className="drift h-12 w-12 xl:h-14 xl:w-14" />
@@ -86,7 +87,7 @@ export function Hero() {
             </span>
             <br />
             {"not just the".split(" ").map((w, i) => (
-              <motion.span key={i} className="mr-[.25em] inline-block" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.55 + i * 0.1, duration: 0.9, ease }}>{w}</motion.span>
+              <Fragment key={i}><motion.span className="mr-[.25em] inline-block" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.55 + i * 0.1, duration: 0.9, ease }}>{w}</motion.span>{" "}</Fragment>
             ))}
             <motion.span className="relative inline-block italic text-leaf" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.85, duration: 0.9, ease }}>
               symptom.
@@ -181,6 +182,8 @@ export function About() {
 }
 
 /* ------------------------------ SERVICES ------------------------------ */
+// Each home-page treatment links to its own full page (better for visitors and for search engines).
+const TREATMENT_PAGE: Record<string, string> = { psychological: "mental-health", diabetes: "diabetes-treatment", garbhsanskar: "garbhsanskar", beejsanskar: "beejsanskar", panchakarma: "panchakarma", "online-consultation": "online-consultation" };
 export function Services() {
   const [sel, setSel] = useState<(typeof treatments)[number] | null>(null);
   return (
@@ -198,12 +201,16 @@ export function Services() {
                 <div className="p-6" style={{ transform: "translateZ(30px)" }}>
                   <h3 className="display text-2xl font-semibold leading-tight">{t.name}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-ink/65">{t.short}</p>
-                  <button className="mt-5 text-sm font-semibold text-leaf" aria-label={`Details: ${t.name}`}>Explore treatment →</button>
+                  <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold">
+                    <button className="text-leaf" aria-label={`Quick view: ${t.name}`}>Quick view →</button>
+                    {TREATMENT_PAGE[t.id] && <Link href={`/services/${TREATMENT_PAGE[t.id]}`} onClick={(e) => e.stopPropagation()} className="text-forest underline-offset-4 hover:underline">Full guide →</Link>}
+                  </div>
                 </div>
               </Tilt>
             </Reveal>
           ))}
         </div>
+        <p className="mt-8 text-center"><Link href="/services" className="btn btn-ghost">View all treatments, including leech therapy →</Link></p>
       </div>
       <AnimatePresence>
         {sel && (
@@ -220,7 +227,10 @@ export function Services() {
                   <div key={k}><dt className="font-semibold text-leaf">{k}</dt><dd className="mt-0.5 text-ink/70">{v}</dd></div>
                 ))}
               </dl>
-              <a href={wa(`Hello, I would like to book: ${sel.name}`)} target="_blank" rel="noopener" className="btn btn-dark mt-8">Book this on WhatsApp →</a>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a href={wa(`Hello, I would like to book: ${sel.name}`)} target="_blank" rel="noopener" className="btn btn-dark">Book this on WhatsApp →</a>
+                {TREATMENT_PAGE[sel.id] && <Link href={`/services/${TREATMENT_PAGE[sel.id]}`} className="btn btn-ghost">Read the full guide</Link>}
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -253,7 +263,7 @@ export function Doshas() {
         </div>
         <div className="relative h-[300px] sm:h-[420px] lg:h-[560px]">
           <div aria-hidden className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_50%_45%,#fff,#efe9f8_60%,transparent)]" />
-          <DoshaScene active={d} onSelect={(x) => { if (x !== d) buzz(HAPTIC.select); setD(x); }} className="absolute inset-0" />
+          <LazyMount className="absolute inset-0"><DoshaScene active={d} onSelect={(x) => { if (x !== d) buzz(HAPTIC.select); setD(x); }} className="absolute inset-0" /></LazyMount>
         </div>
       </div>
     </section>
