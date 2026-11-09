@@ -75,7 +75,7 @@ const RINGS = [
   { n: 6, len: 1.4, w: 0.5, open: 0.5, closed: 0.08, tint: "#ffe0c8", off: 0.2 },
 ];
 
-function Lotus() {
+function Lotus({ scale = 1.05 }: { scale?: number }) {
   const geo = useMemo(petalGeometry, []);
   const root = useRef<THREE.Group>(null);
   const petals = useRef<THREE.Group[]>([]);
@@ -103,7 +103,7 @@ function Lotus() {
   });
   let k = -1;
   return (
-    <group ref={root} position={[0, -0.2, 0]} scale={1.05}>
+    <group ref={root} position={[0, -0.2, 0]} scale={scale}>
       {RINGS.map((r, ri) =>
         Array.from({ length: r.n }, (_, i) => {
           k++;
@@ -205,7 +205,33 @@ function Leaves() {
   );
 }
 
-export function LotusScene({ className = "" }: { className?: string }) {
+/** Warm marble plinth the lotus rests on (hero "arch" variant). */
+function Plinth() {
+  return (
+    <group position={[0, -0.5, 0]}>
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[2.7, 2.9, 0.5, 64]} />
+        <meshStandardMaterial color="#e2cfb2" roughness={0.9} metalness={0.02} />
+      </mesh>
+      <mesh position={[0, 0.27, 0]}>
+        <cylinderGeometry args={[2.35, 2.35, 0.06, 64]} />
+        <meshStandardMaterial color="#f4ead9" roughness={0.6} />
+      </mesh>
+    </group>
+  );
+}
+
+export function LotusScene({ className = "", variant = "pond" }: { className?: string; variant?: "pond" | "arch" }) {
+  if (variant === "arch") {
+    return (
+      <Stage className={className} camera={[0, 2.0, 8.6]}>
+        <Lotus scale={1.3} />
+        <Plinth />
+        <Leaves />
+        <Sparkles count={45} scale={[6, 5, 6]} size={4} speed={0.3} color="#f5c26b" opacity={0.85} />
+      </Stage>
+    );
+  }
   return (
     <Stage className={className} camera={[0, 2.6, 9.6]} labels={CHIPS.map((t) => ({ id: "o-" + t, text: t, cls: "chip shadow-md !bg-white/90" }))}>
       <Lotus />

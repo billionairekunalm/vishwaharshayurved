@@ -6,14 +6,24 @@ import { AnimatePresence, motion } from "framer-motion";
 import { clinic, doctor, navLinks, story, treatments, trustStats } from "@/data/clinic";
 import { Counter, Heading, Reveal, Squiggle, Tilt } from "./ui";
 import { buzz, HAPTIC } from "@/lib/haptic";
+import { Ingredient } from "./GateArt";
+import { ArrowIcon, CareLine, LeafLine, LotusLine, MortarLine, PhoneIcon, WhatsAppIcon } from "./HeroIcons";
 import type { Dosha } from "./Scene3D";
 
-const LotusScene = dynamic(() => import("./Scene3D").then((m) => m.LotusScene), { ssr: false });
 const DoshaScene = dynamic(() => import("./Scene3D").then((m) => m.DoshaScene), { ssr: false });
 
 export const wa = (t: string) => `https://wa.me/91${clinic.whatsapp}?text=${encodeURIComponent(t)}`;
 
 /* ------------------------------ NAV + HERO ------------------------------ */
+const NAV: [string, string][] = [["about", "About"], ["services", "Services"], ["doctor", "Doctor"], ["journey", "Patient Journey"], ["gallery", "Gallery"], ["contact", "Contact"]];
+const FEATURES = [
+  { Icon: LotusLine, a: "Root-Cause", b: "Healing" },
+  { Icon: MortarLine, a: "Natural &", b: "Safe Treatment" },
+  { Icon: CareLine, a: "Personalised", b: "Care" },
+  { Icon: LeafLine, a: "Holistic", b: "Wellness" },
+];
+const ease = [0.16, 1, 0.3, 1] as const;
+
 export function Hero() {
   const [open, setOpen] = useState(false);
   const [k, setK] = useState(0); // bumps when the entrance doors open, replaying the hero animation
@@ -23,19 +33,27 @@ export function Hero() {
     return () => window.removeEventListener("doors-open", f);
   }, []);
   return (
-    <header id="home" className="panel mx-3 mt-3 overflow-hidden sm:mx-6 sm:mt-5">
-      <nav aria-label="Main" className="relative z-30 flex items-center justify-between px-5 py-5 sm:px-10">
-        <a href="#home" className="flex items-center gap-2.5" aria-label={clinic.name}>
-          <Image src="/logo.png" alt="" width={96} height={96} className="h-11 w-11 object-contain" />
-          <span className="display text-xl font-semibold">Vishwaharsh <span className="text-leaf">Ayurved</span></span>
+    <header id="home" className="panel relative mx-3 mt-3 overflow-hidden sm:mx-6 sm:mt-5">
+      {/* soft leaf shadows in the corners */}
+      <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 w-44 rotate-[30deg] opacity-30 blur-[3px] sm:-left-16 sm:-top-14 sm:w-64 sm:opacity-40"><Ingredient name="Tulsi" className="w-full" /></div>
+      <div aria-hidden className="pointer-events-none absolute -left-16 top-40 hidden w-40 -rotate-[20deg] opacity-40 blur-[3px] lg:block"><Ingredient name="Neem" className="w-full" /></div>
+      <div aria-hidden className="pointer-events-none absolute -bottom-14 -right-10 w-56 -rotate-[25deg] opacity-45 blur-[3px] sm:w-80"><Ingredient name="Neem" className="w-full" /></div>
+      <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-[radial-gradient(ellipse_at_100%_30%,rgba(120,150,110,.14),transparent_70%)]" />
+
+      <nav aria-label="Main" className="relative z-30 flex items-center justify-between gap-4 px-5 py-5 sm:px-10">
+        <a href="#home" className="flex items-center gap-3" aria-label={clinic.name}>
+          <Image src="/logo.png" alt="" width={96} height={96} priority className="h-12 w-12 object-contain" />
+          <span className="leading-none">
+            <span className="display block text-2xl font-semibold sm:text-[1.75rem]">Vishwaharsh</span>
+            <span className="mt-1 flex items-center gap-2 text-[10px] font-semibold tracking-[0.42em] text-forest"><i className="h-px w-5 bg-forest/50" />AYURVED<i className="h-px w-5 bg-forest/50" /></span>
+          </span>
         </a>
-        <ul className="hidden items-center gap-7 text-sm font-medium whitespace-nowrap text-ink/70 xl:flex">
-          {navLinks.slice(1).map((l) => (
-            <li key={l.id}><a className="transition hover:text-ink" href={`#${l.id}`}>{l.label}</a></li>
-          ))}
+        <ul className="hidden items-center gap-8 whitespace-nowrap text-[15px] font-medium text-ink/80 xl:flex">
+          {NAV.map(([id, label]) => <li key={id}><a className="transition hover:text-forest" href={`#${id}`}>{label}</a></li>)}
         </ul>
-        <div className="flex items-center gap-2">
-          <a href="#contact" className="btn btn-dark hidden !py-2.5 text-sm sm:inline-flex">Book Appointment</a>
+        <div className="flex items-center gap-3">
+          <a href={`tel:+91${clinic.phone}`} aria-label="Call us" className="hidden h-12 w-12 place-items-center rounded-full border border-forest/50 text-forest transition hover:bg-forest hover:text-white sm:grid"><PhoneIcon /></a>
+          <a href="#contact" className="btn hidden bg-forest !py-3 text-white shadow-[0_14px_30px_-14px_rgba(20,80,44,.7)] sm:inline-flex">Book Appointment <ArrowIcon /></a>
           <button className="btn btn-ghost !p-3 xl:hidden" aria-label="Menu" aria-expanded={open} onClick={() => setOpen(!open)}>
             <span className="relative block h-0.5 w-5 bg-ink before:absolute before:h-0.5 before:w-5 before:-translate-y-1.5 before:bg-ink after:absolute after:h-0.5 after:w-5 after:translate-y-1.5 after:bg-ink" />
           </button>
@@ -49,40 +67,66 @@ export function Hero() {
         </AnimatePresence>
       </nav>
 
-      <div className="relative grid items-center gap-2 px-5 pb-10 sm:px-10 lg:grid-cols-[1.02fr_1fr] lg:pb-16">
-        <div key={k} className="relative z-10 py-2 lg:py-16">
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="chip mb-6 inline-block text-leaf">
-            🌿 {clinic.address.locality} · {doctor.qualifications[1].abbr} (Ayurveda)
+      <div className="relative grid items-center gap-6 px-5 pb-10 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-4 lg:pb-14">
+        {/* ---------- words ---------- */}
+        <div key={k} className="relative z-10 py-2 lg:py-10">
+          <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.8, ease }}
+            className="inline-flex items-center gap-3 rounded-full bg-white/85 px-4 py-2 text-sm font-medium text-forest shadow-[0_10px_26px_-16px_rgba(40,70,45,.55)] ring-1 ring-black/5">
+            <LeafLine className="h-5 w-5" /> Authentic Ayurvedic Care <span aria-hidden className="h-4 w-px bg-forest/30" /> Chinchwad, Pune
           </motion.p>
-          <h1 className="display text-[2.75rem] font-bold leading-[1.02] sm:text-6xl xl:text-7xl">
-            {"Heal the root,".split(" ").map((w, i) => (
-              <motion.span key={i} className="mr-[.25em] inline-block" initial={{ y: 60, opacity: 0, rotateX: -60 }} animate={{ y: 0, opacity: 1, rotateX: 0 }} transition={{ delay: 0.25 + i * 0.1, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>{w}</motion.span>
-            ))}
+
+          <h1 className="display mt-6 text-[2.7rem] font-medium leading-[1.04] tracking-tight sm:text-6xl xl:text-[4.5rem]">
+            <span className="relative inline-block">
+              {"Heal the root,".split(" ").map((w, i) => (
+                <motion.span key={i} className="mr-[.25em] inline-block" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 + i * 0.1, duration: 0.9, ease }}>{w}</motion.span>
+              ))}
+              <motion.span aria-hidden initial={{ opacity: 0, scale: 0.4, rotate: -30 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ delay: 1, duration: 0.8, ease }} className="absolute -right-10 -top-3 hidden sm:block">
+                <Ingredient name="Tulsi" className="drift h-12 w-12 xl:h-14 xl:w-14" />
+              </motion.span>
+            </span>
             <br />
             {"not just the".split(" ").map((w, i) => (
-              <motion.span key={i} className="mr-[.25em] inline-block" initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 + i * 0.1, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>{w}</motion.span>
+              <motion.span key={i} className="mr-[.25em] inline-block" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.55 + i * 0.1, duration: 0.9, ease }}>{w}</motion.span>
             ))}
-            <span className="relative inline-block text-leaf">
+            <motion.span className="relative inline-block italic text-leaf" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.85, duration: 0.9, ease }}>
               symptom.
-              <Squiggle className="absolute -bottom-3 left-0 w-full" />
-            </span>
+              <motion.svg aria-hidden viewBox="0 0 300 22" preserveAspectRatio="none" className="absolute -bottom-2 left-0 h-3 w-full text-leaf sm:-bottom-3 sm:h-4"
+                initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} style={{ transformOrigin: "left" }} transition={{ delay: 1.4, duration: 0.9, ease: "easeOut" }}>
+                <path d="M2 13C70 19 170 6 298 2 192 13 84 21 2 13Z" fill="currentColor" />
+              </motion.svg>
+            </motion.span>
           </h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1 }} className="mt-5 max-w-lg text-base leading-relaxed sm:mt-9 sm:text-lg text-ink/65">
-            Personalised Ayurvedic care with Dr. Harshada Malge — for mind, metabolism, motherhood and deep rejuvenation. In Chinchwad, or online from anywhere.
+
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1, duration: 0.8, ease }} className="mt-7 max-w-md text-base leading-relaxed text-ink/65 sm:text-lg">
+            Personalised Ayurvedic treatment by Dr. Harshada Malge for long-term, natural and holistic healing.
           </motion.p>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }} lang="mr" className="mt-2 text-sm text-ink/45">{clinic.taglineDevanagari}</motion.p>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3 }} className="mt-9 flex flex-wrap gap-3">
-            <a href="#contact" className="btn btn-dark">Get Started <span aria-hidden>→</span></a>
-            <a href={wa(clinic.whatsappPrefill)} target="_blank" rel="noopener" className="btn btn-ghost">💬 WhatsApp us</a>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }} lang="mr" className="mt-1.5 text-sm text-ink/40">{clinic.taglineDevanagari}</motion.p>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3, duration: 0.8, ease }} className="mt-8 flex flex-wrap gap-3">
+            <a href="#contact" className="btn bg-forest text-white shadow-[0_16px_34px_-16px_rgba(20,80,44,.8)]">Book Appointment <ArrowIcon /></a>
+            <a href={wa(clinic.whatsappPrefill)} target="_blank" rel="noopener" className="btn border border-ink/15 bg-white/80 text-ink hover:bg-white"><WhatsAppIcon className="h-6 w-6 text-[#1f9d55]" /> WhatsApp Us</a>
           </motion.div>
+
+          <motion.ul initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5, duration: 0.9, ease }} className="mt-10 grid grid-cols-2 gap-x-5 gap-y-5 sm:flex sm:items-center sm:gap-0">
+            {FEATURES.map(({ Icon, a, b }, i) => (
+              <li key={a} className={`flex items-center gap-2.5 sm:shrink-0 ${i ? "sm:ml-4 sm:border-l sm:border-ink/15 sm:pl-4 xl:ml-6 xl:pl-6" : ""}`}>
+                <Icon className="h-8 w-8 shrink-0 text-forest sm:h-9 sm:w-9 xl:h-10 xl:w-10" />
+                <span className="whitespace-nowrap text-[13px] font-medium leading-tight text-ink/80 sm:text-sm">{a}<br />{b}</span>
+              </li>
+            ))}
+          </motion.ul>
         </div>
-        <div className="relative -mx-4 h-[330px] sm:h-[520px] lg:mx-0 lg:h-[660px]">
-          <div aria-hidden className="absolute inset-x-6 top-10 bottom-6 -z-0 rounded-full bg-[radial-gradient(closest-side,#ffe3d0,transparent)] opacity-80 blur-2xl" />
-          <a href="#clinic" className="glass bob absolute bottom-4 right-4 z-20 flex items-center gap-3 rounded-2xl p-2 pr-5 sm:bottom-8 sm:right-8">
+
+        {/* ---------- arch niche: mortar & pestle, herbs and hibiscus ---------- */}
+        <div className="relative mx-auto mt-4 w-full max-w-[580px] lg:mt-0">
+          <motion.div initial={{ opacity: 0, y: 40, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: 0.3, duration: 1.2, ease }}>
+            <Image src="/images/hero-arch.jpg" alt="Ayurvedic herbs: a stone mortar and pestle with fresh leaves, a herbal oil bottle, powder and a hibiscus flower on a marble stand" width={979} height={944} priority sizes="(min-width:1024px) 45vw, 92vw"
+              className="h-auto w-full [mask-image:radial-gradient(ellipse_at_50%_50%,#000_52%,transparent_92%)]" />
+          </motion.div>
+          <a href="#clinic" className="glass bob relative z-20 mx-auto -mt-3 flex w-fit items-center gap-3 rounded-2xl p-2 pr-5 lg:absolute lg:-bottom-3 lg:right-2 lg:mx-0 lg:mt-0">
             <Image src="/clinic/storefront-door.jpg" alt="" width={56} height={56} className="h-14 w-14 rounded-xl object-cover" />
             <span className="text-left text-xs leading-tight"><b className="block text-sm">Visit our clinic</b>Shivaji Park, Chinchwad</span>
           </a>
-          <LotusScene className="absolute inset-0 [mask-image:radial-gradient(closest-side,#000_88%,transparent)]" />
         </div>
       </div>
     </header>

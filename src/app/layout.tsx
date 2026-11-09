@@ -3,7 +3,7 @@ import { Fraunces, DM_Sans, Caveat, Tiro_Devanagari_Hindi } from "next/font/goog
 import "./globals.css";
 import { clinic, doctor, faqs, treatments } from "@/data/clinic";
 
-const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", display: "swap" });
+const fraunces = Fraunces({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-fraunces", display: "swap" });
 const dm = DM_Sans({ subsets: ["latin"], variable: "--font-dm", display: "swap" });
 const caveat = Caveat({ subsets: ["latin"], variable: "--font-caveat", display: "swap" });
 const deva = Tiro_Devanagari_Hindi({ subsets: ["devanagari"], weight: "400", variable: "--font-devanagari", display: "swap" });
